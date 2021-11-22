@@ -1,0 +1,6 @@
+build
+release
+.vscode
+*.code-workspace
+*.exe
+*.log
