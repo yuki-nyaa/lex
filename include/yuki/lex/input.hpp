@@ -1,5 +1,5 @@
 #pragma once
-#include<yuki/utf8.hpp>
+#include<yuki/unicode.hpp>
 #include<cstdio>
 #include<cstring>
 #include<cassert>
@@ -10,7 +10,7 @@ namespace yuki::lex{
 struct Input {
   public:
     /// Input type
-    enum struct Source_Type : unsigned {NIL,FILE_P,CCHAR_P,SV,CUCHAR_P,USV,INPUT};
+    enum struct Source_Type : unsigned {NIL,FILE_P,CCHAR_P,SV,CUCHAR_P,USV};
     static constexpr size_t get_raw_temp_default_size = 4; // Size just enough for normal use. You might increase it if you have special needs.
   private:
     template<typename T>
@@ -120,13 +120,6 @@ struct Input {
     :
         Input(ustring.c_str(),ustring.size(),enc,cp)
     {}
-    /// Construct input character sequence from another `Input`.
-    constexpr Input(Input& in,
-        encoding enc = encoding::utf8,
-        yuki::codepage_t* cp = nullptr) noexcept
-    :
-        Input(Source_Type::INPUT,&in,enc,cp)
-    {}
     constexpr Input& operator=(const Input& other) noexcept
     {
         source_type_= other.source_type_;
@@ -190,13 +183,6 @@ struct Input {
             case Source_Type::USV : return source_.usv_.data_;
             default : return nullptr;
         }
-    }
-
-    /// Get the `reflex::Input` of this Input object.
-    constexpr Input& input() const
-    {
-        assert(source_type_==Source_Type::INPUT);
-        return *(source_.input_);
     }
 
     /// Get the remaining input size. Only meaningful for string view.
@@ -265,10 +251,6 @@ struct Input {
         source_.usv_.data_ = s;
         source_.usv_.size_ = sz;
     }
-    constexpr void set_source(Input& in){
-        source_type_ = Source_Type::INPUT;
-        source_.input_ = &in;
-    }
   protected:
     Source_Type source_type_;
     yuki::encoding enc_;  ///< encoding
@@ -279,13 +261,11 @@ struct Input {
         struct{const char* data_; size_t size_;} sv_;
         const unsigned char* ucstring_;
         struct{const unsigned char* data_; size_t size_;} usv_;
-        Input* input_;
         constexpr Source_Union_(FILE* file_other) noexcept : file_(file_other) {}
         constexpr Source_Union_(const char* cstring_other) noexcept : cstring_(cstring_other) {}
         constexpr Source_Union_(const char* d,size_t s) noexcept : sv_{d,s} {}
         constexpr Source_Union_(const unsigned char* ucstring_other) noexcept : ucstring_(ucstring_other) {}
         constexpr Source_Union_(const unsigned char* d,size_t s) noexcept : usv_{d,s} {}
-        constexpr Source_Union_(Input* i) noexcept : input_(i) {}
         constexpr Source_Union_(std::nullptr_t = nullptr) noexcept : Source_Union_((FILE*)nullptr) {}
     } source_;
 
@@ -322,8 +302,6 @@ inline bool Input::get_raw_able() const
             return *source_.ucstring_!='\0';
         case Source_Type::USV :
             return source_.usv_.size_>0;
-        case Source_Type::INPUT :
-            return source_.input_->get_raw_able();
         default :
             return false;
     }
@@ -402,9 +380,6 @@ size_t Input::get_raw(C* buf,size_t size,size_t count){
             }
             return count;
         }
-        case Source_Type::INPUT:{
-            return source_.input_->get_raw(buf,size,count);
-        }
         default : return 0;
     }
 } // size_t Input::get_raw(C* buf,size_t size,size_t count)
@@ -434,8 +409,6 @@ inline int Input::get_raw(){
                 return --source_.usv_.size_,*source_.usv_.data_++;
             else
                 return EOF;
-        case Source_Type::INPUT:
-                return source_.input_->get_raw();
         default: return EOF;
     }
 }
@@ -455,8 +428,6 @@ inline int Input::peek_raw(){
             return (*source_.ucstring_!=0) ? *source_.ucstring_ : EOF;
         case Source_Type::USV :
             return (source_.usv_.size_>0) ? *source_.usv_.data_ : EOF;
-        case Source_Type::INPUT :
-            return source_.input_->peek_raw();
         default:
             return EOF;
     }
@@ -591,7 +562,6 @@ struct BufferedInput : private Input{
     using Input::c_str;
     using Input::file;
     using Input::u_c_str;
-    using Input::input;
     using Input::remaining_size;
     using Input::get_encoding;
     using Input::set_encoding;
@@ -602,48 +572,29 @@ struct BufferedInput : private Input{
     static void free_br(unsigned char* p) {delete[] p;}
     static void free_b8(char* p) {delete[] p;}
     bool no_br_needed() const {
-        return Input::source_type_==Source_Type::CCHAR_P
-            || Input::source_type_==Source_Type::SV
-            || Input::source_type_==Source_Type::CUCHAR_P
-            || Input::source_type_==Source_Type::USV;
+        return source_type_==Source_Type::CCHAR_P
+            || source_type_==Source_Type::SV
+            || source_type_==Source_Type::CUCHAR_P
+            || source_type_==Source_Type::USV
+            || source_type_==Source_Type::NIL;
     }
     bool no_b8_needed() const {return Input::enc_==yuki::encoding::utf8;}
     bool read_directly() const {return no_br_needed() && s_br==0;}
     yuki::U8Char get_u8_from_br_input();
   public:
-    BufferedInput() noexcept :
-        Input(),
-        br(nullptr),
-        s_br(0),
-        e_br(0),
-        p_br(0),
-        b8(nullptr),
-        s_b8(0),
-        e_b8(0),
-        p_b8(0),
-        pp_b8(0),
-        lineno(1),
-        colno(1),
-        lineno_p(1),
-        colno_p(1)
-    {}
+    struct Pos{
+        size_t off;
+        size_t lineno;
+        size_t colno;
 
-    template<typename... Args>
+        constexpr bool empty() const {return lineno==0;}
+    };
+
+    BufferedInput() noexcept = default;
+
+    template<typename... Args,typename = std::enable_if_t<std::is_constructible_v<Input,Args&&...>>>
     explicit BufferedInput(Args&&... args) noexcept :
-        Input(std::forward<Args>(args)...),
-        br(nullptr),
-        s_br(0),
-        e_br(0),
-        p_br(0),
-        b8(nullptr),
-        s_b8(0),
-        e_b8(0),
-        p_b8(0),
-        pp_b8(0),
-        lineno(1),
-        colno(1),
-        lineno_p(1),
-        colno_p(1)
+        Input(std::forward<Args>(args)...)
     {}
 
     BufferedInput(const BufferedInput& other) noexcept :
@@ -797,6 +748,10 @@ struct BufferedInput : private Input{
         p_b8 = 0;
     }
 
+    void discard_u8_buffer() {pp_b8=0;p_b8=0;e_b8=0;}
+    void discard_raw_buffer() {p_br=0;e_br=0;}
+    void discard_buffer() {pp_b8=0;p_b8=0;e_b8=0;p_br=0;e_br=0;}
+
     size_t raw_buffer_size() const {return s_br;}
     size_t raw_data_size() const {return e_br-p_br;}
 
@@ -829,18 +784,26 @@ struct BufferedInput : private Input{
     }
 
     int get_raw(){
-        if(read_directly())
-            return Input::get_raw();
-        else if(e_br-p_br>0 || fill_raw_buffer()!=0)
+        if(s_br==0){
+            if(no_br_needed())
+                return Input::get_raw();
+            else
+                resize_raw_buffer(RAW_BUFFER_SIZE_DEFAULT);
+        }
+        if(e_br-p_br>0 || fill_raw_buffer()!=0)
             return br[p_br++];
         else
             return EOF;
     }
 
     int peek_raw(){
-        if(read_directly())
-            return Input::peek_raw();
-        else if(e_br-p_br>0 || fill_raw_buffer()!=0)
+        if(s_br==0){
+            if(no_br_needed())
+                return Input::get_raw();
+            else
+                resize_raw_buffer(RAW_BUFFER_SIZE_DEFAULT);
+        }
+        if(e_br-p_br>0 || fill_raw_buffer()!=0)
             return br[p_br];
         else
             return EOF;
@@ -875,8 +838,12 @@ struct BufferedInput : private Input{
         if(u8c==yuki::EOF_U8)
             return yuki::EOF_U8;
 
-        if(e_b8+u8c.length()>s_b8)
-            resize_u8_buffer(2*s_b8 < U8_BUFFER_SIZE_DEFAULT ? U8_BUFFER_SIZE_DEFAULT : 2*s_b8);
+        if(e_b8+u8c.length()>s_b8){
+            if(e_b8-p_b8+u8c.length()<=s_b8)
+                realign_u8_buffer();
+            else
+                resize_u8_buffer(2*s_b8 < U8_BUFFER_SIZE_DEFAULT ? U8_BUFFER_SIZE_DEFAULT : 2*s_b8);
+        }
         u8c.write_to(b8+e_b8);
         e_b8+=u8c.length();
         return u8c;
@@ -896,8 +863,12 @@ struct BufferedInput : private Input{
             if(u8c==yuki::EOF_U8)
                 return yuki::EOF_U8;
 
-            if(e_b8+u8c.length()>s_b8)
-                resize_u8_buffer(2*s_b8 < U8_BUFFER_SIZE_DEFAULT ? U8_BUFFER_SIZE_DEFAULT : 2*s_b8);
+            if(e_b8+u8c.length()>s_b8){
+                if(e_b8-p_b8+u8c.length()<=s_b8)
+                    realign_u8_buffer();
+                else
+                    resize_u8_buffer(2*s_b8 < U8_BUFFER_SIZE_DEFAULT ? U8_BUFFER_SIZE_DEFAULT : 2*s_b8);
+            }
             u8c.write_to(b8+e_b8);
             e_b8+=u8c.length();
             pp_b8 = e_b8;
@@ -913,10 +884,15 @@ struct BufferedInput : private Input{
         return u8c;
     }
 
+    void reset_peek() {pp_b8=p_b8;lineno_p=lineno;colno_p=colno;}
+    Pos get_peek() const {return {pp_b8-p_b8,lineno_p,colno_p};}
+    void set_peek(size_t off,size_t l,size_t c) {pp_b8=p_b8+off; lineno_p=l; colno_p=c;}
+    void set_peek(Pos pos) {set_peek(pos.off,pos.lineno,pos.colno);}
+    void advance_to_peek() {p_b8=pp_b8;lineno=lineno_p;colno=colno_p;}
 
-
-    void reset_peek() {pp_b8 = p_b8;lineno_p=lineno;colno_p=colno;}
-
+    /// @note Not null-terminated!!
+    const char* peeked_so_far_ptr() const {return b8+p_b8;}
+    size_t peeked_so_far_size() const {return pp_b8-p_b8;}
     std::string_view peeked_so_far_sv() const {return {b8+p_b8,pp_b8-p_b8};}
     std::string peeked_so_far_s() const {return {b8+p_b8,pp_b8-p_b8};}
 
@@ -956,7 +932,7 @@ struct BufferedInput : private Input{
     }
     bool at_begin() const {return lineno==1 && colno==1;}
     bool at_eof(){
-        if(p_b8=e_b8){
+        if(p_b8==e_b8){
             yuki::U8Char u8c=get_u8_from_br_input();
             if(u8c==yuki::EOF_U8)
                 return true;
@@ -997,35 +973,33 @@ struct BufferedInput : private Input{
                 resize_u8_buffer(2*s_b8 < U8_BUFFER_SIZE_DEFAULT ? U8_BUFFER_SIZE_DEFAULT : 2*s_b8);
             u8c.write_to(b8+e_b8);
             e_b8+=u8c.length();
-            pp_b8 = e_b8;
         }
         return false;
     }
 
-    // The following functions does not affect the current buffer. Better use when EOF is hit.
-    void set_source(bool if_reset_pos=true) {Input::source_type_ = Source_Type::NIL; if(if_reset_pos) reset_pos();}
-    void set_source(FILE* f,bool if_reset_pos=true) {Input::set_source(f); if(if_reset_pos) reset_pos();}
-    void set_source(const char* s,bool if_reset_pos=true) {p_br = e_br;resize_raw_buffer(0);Input::set_source(s); if(if_reset_pos) reset_pos();}
-    void set_source(const char* s,size_t sz,bool if_reset_pos=true) {p_br = e_br;resize_raw_buffer(0);Input::set_source(s,sz); if(if_reset_pos) reset_pos();}
-    void set_source(const unsigned char* s,bool if_reset_pos=true) {p_br = e_br;resize_raw_buffer(0);Input::set_source(s); if(if_reset_pos) reset_pos();}
-    void set_source(const unsigned char* s,size_t sz,bool if_reset_pos=true) {p_br = e_br;resize_raw_buffer(0);Input::set_source(s,sz); if(if_reset_pos) reset_pos();}
-    void set_source(Input& in,bool if_reset_pos=true) {Input::set_source(in); if(if_reset_pos) reset_pos();}
+    // Note: The following functions discard everything in the buffer.
+    void set_source(bool if_reset_pos=true) {discard_buffer(); Input::source_type_ = Source_Type::NIL; if(if_reset_pos){reset_pos();reset_pos_p();}}
+    void set_source(FILE* f,bool if_reset_pos=true) {discard_buffer(); Input::set_source(f); if(if_reset_pos){reset_pos();reset_pos_p();}}
+    void set_source(const char* s,bool if_reset_pos=true) {discard_buffer(); resize_raw_buffer(0); Input::set_source(s); if(if_reset_pos){reset_pos();reset_pos_p();}}
+    void set_source(const char* s,size_t sz,bool if_reset_pos=true) {discard_buffer(); resize_raw_buffer(0); Input::set_source(s,sz); if(if_reset_pos){reset_pos();reset_pos_p();}}
+    void set_source(const unsigned char* s,bool if_reset_pos=true) {discard_buffer(); resize_raw_buffer(0); Input::set_source(s); if(if_reset_pos){reset_pos();reset_pos_p();}}
+    void set_source(const unsigned char* s,size_t sz,bool if_reset_pos=true) {discard_buffer(); resize_raw_buffer(0); Input::set_source(s,sz); if(if_reset_pos){reset_pos();reset_pos_p();}}
   private:
-    unsigned char* br;
-    size_t s_br;
-    size_t e_br;
-    size_t p_br;
+    unsigned char* br = nullptr;
+    size_t s_br = 0;
+    size_t e_br = 0;
+    size_t p_br = 0;
 
-    char* b8;
-    size_t s_b8;
-    size_t e_b8;
-    size_t p_b8;
-    size_t pp_b8;
+    char* b8 = nullptr;
+    size_t s_b8 = 0;
+    size_t e_b8 = 0;
+    size_t p_b8 = 0;
+    size_t pp_b8 = 0;
   public:
-    size_t lineno;
-    size_t colno;
-    size_t lineno_p;
-    size_t colno_p;
+    size_t lineno = 1;
+    size_t colno = 1;
+    size_t lineno_p = 1;
+    size_t colno_p = 1;
 }; // struct BufferedInput
 
 yuki::U8Char BufferedInput::get_u8_from_br_input(){

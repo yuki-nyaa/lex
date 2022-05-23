@@ -1,4 +1,4 @@
-#include"../include/yuki/lex/input.h"
+#include"../include/yuki/lex/input.hpp"
 void to_utf32be(char32_t c,char* p){
     p[0] = (c >> 24) & 0xFF;
     p[1] = (c >> 16) & 0xFF;
