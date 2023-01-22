@@ -1,15 +1,8 @@
 #pragma once
-#include<yuki/ordered_vector.hpp>
+#include<yuki/Ordered_Vector.hpp>
 #include<yuki/unicode.hpp>
 
 namespace yuki::lex{
-
-namespace MetaChar{
-    enum : char32_t {
-        BEGIN_ = yuki::EOF_32,
-        EPSILON,
-    };
-}
 
 struct Char_Interval{
     char32_t lb;
@@ -19,13 +12,15 @@ struct Char_Interval{
 
     constexpr bool empty() const {return lb>ub;}
 
-    constexpr bool contains(char32_t c) const {return c>=lb && c<=ub;}
+    constexpr bool contains(const char32_t c) const {return c>=lb && c<=ub;}
+
+    constexpr size_t size() const {return ub-lb+1;}
 
     struct Less;
 };
 
 struct Char_Interval::Less{
-    static constexpr bool compare(Char_Interval lhs, Char_Interval rhs) noexcept {return lhs.lb<rhs.lb;}
+    static constexpr bool compare(const Char_Interval lhs, const Char_Interval rhs) noexcept {return lhs.lb<rhs.lb;}
 
     static constexpr Less select_on_container_copy_construction(Less) {return {};}
 };
@@ -37,12 +32,12 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
   public:
     constexpr Char_Class() noexcept = default;
 
-    Char_Class(yuki::reserve_tag_t,size_type count) noexcept :
+    Char_Class(yuki::reserve_tag_t,const size_type count) noexcept :
         OV_(yuki::reserve_tag,count)
     {}
 
     template<typename It>
-    Char_Class(yuki::from_ordered_tag_t,It it,size_type count) noexcept :
+    Char_Class(yuki::from_ordered_tag_t,const It it,const size_type count) noexcept :
         OV_(yuki::from_ordered_tag,it,count)
     {}
 
@@ -50,11 +45,11 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
         OV_(yuki::from_ordered_tag,il.begin(),il.size())
     {}
 
-    Char_Class(Char_Interval ci) noexcept :
+    Char_Class(const Char_Interval ci) noexcept :
         OV_(1,ci)
     {}
 
-    Char_Class& operator=(Char_Interval ci) noexcept {
+    Char_Class& operator=(const Char_Interval ci) noexcept {
         clear();
         recapacity(1);
         emplace_back(ci);
@@ -76,57 +71,80 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
     using OV_::size;
     using OV_::capacity;
 
-    using OV_::front;
-    using OV_::back;
-    using OV_::operator[];
+    /// For debugging.
+    Char_Interval operator[](const size_t i) const {return OV_::operator[](i);}
 
-    typedef OV_::const_iterator const_interval_iterator;
-    const_interval_iterator begin_interval() const {return OV_::begin();}
-    const_interval_iterator end_interval() const {return OV_::end();}
+    using OV_::const_iterator;
+    const_iterator begin() const {return OV_::begin();}
+    const_iterator end() const {return OV_::end();}
 
-    using OV_::first_equiv_greater;
-    using OV_::first_greater;
-    using OV_::last_smaller;
-    using OV_::last_smaller_equiv;
-    using OV_::contains;
+    size_t char_count() const {
+        size_t c = 0;
+        const OV_::const_iterator e = OV_::end();
+        for(OV_::const_iterator b = OV_::begin();b!=e;++b)
+            c += b->size();
+        return c;
+    }
 
-    const_interval_iterator find(char32_t c) const {
-        const_interval_iterator fg = first_greater({c,c});
-        if(fg!=begin_interval()){
-            if((--fg)->ub >= c) // i.e. last_smaller_equiv
+    bool is_complete() const {return OV_::size()==1 && OV_::front()==Char_Interval{0,yuki::UNICODE_MAX_32};}
+
+    void make_complete() {clear();OV_::emplace_back(0,yuki::UNICODE_MAX_32);}
+
+    const_iterator find(char32_t c) const {
+        const_iterator fg = OV_::first_greater({c,c});
+        if(fg!=begin()){
+            if((--fg)->ub >= c) // i.e. last_less_equiv
                 return fg;
         }
-        return end_interval();
+        return end();
     }
 
     bool contains(char32_t c) const {
-        const_interval_iterator fg = first_greater({c,c});
-        if(fg!=begin_interval())
-            return (--fg)->ub >= c; // i.e. last_smaller_equiv
+        const_iterator fg = OV_::first_greater({c,c});
+        if(fg!=begin())
+            return (--fg)->ub >= c; // i.e. last_less_equiv
         return false;
     }
 
-    //void insert(const char32_t c){
-    //    const const_interval_iterator b = begin_interval();
-    //    const const_interval_iterator e = end_interval();
-    //    const const_interval_iterator fg = first_greater({c,c});
-    //    const const_interval_iterator prev = (fg!=b && (fg-1)->ub >= c) ? fg-1 : e;
+    void insert(const char32_t c){
+        const OV_::Vec_Base::iterator b = OV_::Vec_Base::begin();
+        using yuki::const_kast;
+        const OV_::Vec_Base::iterator fg = const_kast(OV_::first_greater({c,c}));
 
-    //}
+        if(fg==b){
+            if(b!=end() && b->lb==c+1)
+                --b->lb;
+            else
+                OV_::Vec_Base::emplace(b,c,c);
+        }else{
+            const iterator prev = fg-1;
+            if(prev->ub<c){
+                unsigned flag=0;
+                if(prev->ub+1==c)
+                    flag |= 0b10U;
+                if(fg!=end() && fg->lb==c+1)
+                    flag |= 1U;
+                switch(flag){
+                    case 0: OV_::Vec_Base::emplace(fg,c,c);break;
+                    case 1: --fg->lb;break;
+                    case 2: ++prev->ub;break;
+                    case 3: OV_::erase_then_emplace(prev,2,Char_Interval{prev->lb,fg->ub});break;
+                }
+            }
+        }
+    }
 
     void insert(const Char_Interval ci){
         assert(!ci.empty());
 
-        //if(ci.lb==ci.ub)
-        //    return insert(ci.lb);
+        if(ci.lb==ci.ub)
+            return insert(ci.lb);
 
-        const const_interval_iterator b = begin_interval();
-        const const_interval_iterator e = end_interval();
-        const const_interval_iterator left_fg = first_greater({ci.lb,ci.lb});
-        const const_interval_iterator right_fg = first_greater({ci.ub,ci.ub});
+        const const_iterator b=begin(), e=end();
+        const const_iterator left_fg = OV_::first_greater({ci.lb,ci.lb});
+        const const_iterator right_fg = OV_::first_greater({ci.ub,ci.ub});
 
-        const_interval_iterator left = e;
-        const_interval_iterator right = e;
+        const_iterator left=e, right=e;
 
         if(left_fg!=b && (left_fg-1)->ub >= ci.lb)
             left = left_fg-1;
@@ -177,17 +195,17 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
     friend Char_Class operator-(const Char_Class&,const Char_Class&);
 
     template<typename It>
-    friend Char_Class merge_cc(It it,size_t count);
+    void merge_cc(It it,const size_t count);
 
-    struct const_iterator{
+    struct const_char_iterator{
         friend Char_Class;
       private:
         char32_t c;
         Char_Interval ci;
-        const_interval_iterator i;
-        const_interval_iterator i_end;
+        const_iterator i;
+        const_iterator i_end;
 
-        constexpr const_iterator(const_interval_iterator ip,const_interval_iterator iep) noexcept :
+        const_char_iterator(const const_iterator ip,const const_iterator iep) noexcept :
             i(ip),i_end(iep)
         {
             if(i!=i_end){
@@ -196,13 +214,13 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
             }
         }
       public:
-        constexpr const_iterator() noexcept = default;
+        const_char_iterator() noexcept = default;
 
         char32_t operator*() const {return c;}
 
-        constexpr bool is_end() const {return i==i_end;}
+        bool is_end() const {return i==i_end;}
 
-        const_iterator& operator++(){
+        const_char_iterator& operator++(){
             ++c;
             if(c>ci.ub){
                 ++i;
@@ -213,14 +231,15 @@ struct Char_Class : private yuki::Ordered_Vector<Char_Interval,Char_Interval::Le
             }
             return *this;
         }
-    }; // struct const_iterator
+    }; // struct const_char_iterator
 
-    const_iterator begin() const {return {begin_interval(),end_interval()};}
+    const_char_iterator begin_char() const {return {begin(),end()};}
 }; // struct Char_Class
 
+// A*(B0+...+Bm) = (A*B0)+...+(A*Bm)
 inline Char_Class operator*(const Char_Class& lhs_p,const Char_Class& rhs_p){
-    typedef Char_Class::Vec_Base::iterator interval_iterator;
-    typedef Char_Class::const_interval_iterator const_interval_iterator;
+    typedef Char_Class::Vec_Base::iterator iterator;
+    typedef Char_Class::const_iterator const_iterator;
 
     const Char_Class* lhs = &lhs_p;
     const Char_Class* rhs = &rhs_p;
@@ -230,10 +249,10 @@ inline Char_Class operator*(const Char_Class& lhs_p,const Char_Class& rhs_p){
     if(rhs->empty())
         return {};
 
-    auto append_back = [](Char_Class& cc_p,const_interval_iterator l,const_interval_iterator r) -> interval_iterator {
-        Char_Class::size_type s = r-l;
+    auto append_back = [](Char_Class& cc_p,const const_iterator l,const const_iterator r) -> iterator {
+        const Char_Class::size_type s = r-l;
         assert(cc_p.capacity()>=cc_p.size()+s);
-        interval_iterator e = cc_p.Vec_Base::end();
+        const iterator e = cc_p.Vec_Base::end();
         yuki::uninitialized_copy_no_overlap(e,l,s);
         cc_p.force_resize(cc_p.size()+s);
         return e;
@@ -241,24 +260,24 @@ inline Char_Class operator*(const Char_Class& lhs_p,const Char_Class& rhs_p){
 
     Char_Class cc(yuki::reserve_tag, lhs->size() + rhs->size() - 1);
 
-    {
-    Char_Class::const_interval_iterator ii=rhs->begin_interval();
-    Char_Class::const_interval_iterator iie=rhs->end_interval();
-    for(;ii!=iie;++ii){
-        const Char_Interval ci = *ii;
-        const const_interval_iterator b = lhs->begin_interval();
-        const const_interval_iterator e = lhs->end_interval();
-        const const_interval_iterator left_fg = lhs->first_greater({ci.lb,ci.lb});
-        const const_interval_iterator right_fg = lhs->first_greater({ci.ub,ci.ub});
+    for(const Char_Interval ci : *rhs){
+        const const_iterator b = lhs->begin();
+        const const_iterator e = lhs->end();
+        const const_iterator left_fg = lhs->OV_::first_greater({ci.lb,ci.lb});
+        const const_iterator right_fg = lhs->OV_::first_greater({ci.ub,ci.ub});
 
-        const_interval_iterator left = e;
-        const_interval_iterator right = e;
+        const_iterator left = e;
+        const_iterator right = e;
 
         if(left_fg!=b && (left_fg-1)->ub >= ci.lb)
             left = left_fg-1;
 
         if(right_fg!=b && (right_fg-1)->ub >= ci.ub)
             right = right_fg-1;
+
+        // `left==e` iff. everything in `lhs` is greater than `ci.lb`, or the previous interval of `left_fg` does not contain `ci.lb`.
+        // Otherwise `left` denotes the interval that contains `ci.lb`.
+        // Ditto for `right`.
 
         if(left!=e){
             if(right!=e){ // 1
@@ -287,20 +306,19 @@ inline Char_Class operator*(const Char_Class& lhs_p,const Char_Class& rhs_p){
                 // else do nothing
             }
         }
-    } // for(;ii!=iie;++ii)
-    }
+    } // for(const Char_Interval ci : *rhs)
     return cc;
 } // Char_Class operator*(const Char_Class& lhs_p,const Char_Class& rhs_p)
 
 inline Char_Class operator+(const Char_Class& lhs,const Char_Class& rhs){
-    typedef Char_Class::const_interval_iterator const_interval_iterator;
+    typedef Char_Class::const_iterator const_iterator;
 
     Char_Class cc(yuki::reserve_tag,lhs.size()+rhs.size());
 
-    const_interval_iterator l = lhs.begin_interval();
-    const_interval_iterator r = rhs.begin_interval();
-    const const_interval_iterator le = lhs.end_interval();
-    const const_interval_iterator re = rhs.end_interval();
+    const_iterator l = lhs.begin();
+    const_iterator r = rhs.begin();
+    const const_iterator le = lhs.end();
+    const const_iterator re = rhs.end();
 
     Char_Interval ci;
 
@@ -335,30 +353,26 @@ inline Char_Class operator+(const Char_Class& lhs,const Char_Class& rhs){
 } // Char_Class operator+(const Char_Class& lhs,const Char_Class& rhs)
 
 template<typename It>
-Char_Class merge_cc(It it,const size_t count){
-    typedef Char_Class::const_interval_iterator const_interval_iterator;
+void Char_Class::merge_cc(It it,const size_t count){
+    #ifndef YUKI_LEX_MERGE_CC_RESERVE
+    #define YUKI_LEX_MERGE_CC_RESERVE 64
+    #endif
+    static yuki::Vector<const_iterator> is(yuki::reserve_tag,YUKI_LEX_MERGE_CC_RESERVE),es(yuki::reserve_tag,YUKI_LEX_MERGE_CC_RESERVE);
 
-    size_t total=0;
-    static yuki::Vector<const_interval_iterator> is(yuki::reserve_tag,32),es(yuki::reserve_tag,32);
-    is.reserve(count);
-    es.reserve(count);
+    clear();
+    is.clear();
+    es.clear();
 
-    {
-    It it2 = it;
-    for(size_t i=0;i<count;++i,++it2){
-        total+=(it2->size());
-        is.emplace_back(it2->begin_interval());
-        es.emplace_back(it2->end_interval());
-    }
+    for(size_t i=0;i<count;++i,++it){
+        is.emplace_back(it->begin());
+        es.emplace_back(it->end());
     }
 
-    Char_Class cc(yuki::reserve_tag,total);
-
-    const_interval_iterator* i_min;
+    const_iterator* i_min = nullptr;
     Char_Interval ci;
     bool ci_set = false;
 
-    while(1){
+    while(!is_complete()){
         ci_set = false;
         for(size_t i=0;i<count;++i){
             if(is[i]!=es[i] && (!ci_set || is[i]->lb < ci.lb)){
@@ -368,38 +382,35 @@ Char_Class merge_cc(It it,const size_t count){
             }
         }
 
-        if(!ci_set){
-            is.clear();
-            es.clear();
-            return cc;
-        }
+        if(!ci_set)
+            return;
 
         ++*i_min;
 
-        if(!cc.empty()){
-            Char_Interval& cib = cc.Vec_Base::back();
+        if(!empty()){
+            Char_Interval& cib = OV_::Vec_Base::back();
             if(ci.ub>cib.ub){
                 if(ci.lb<=cib.ub+1)
                     cib.ub=ci.ub;
                 else
-                    cc.emplace_back(ci);
+                    OV_::Vec_Base::emplace_back(ci);
             }
         }else
-            cc.emplace_back(ci);
+            OV_::Vec_Base::emplace_back(ci);
     }
-} // Char_Class merge_cc(It it,const size_t count)
+} // void Char_Class::merge_cc(It it,const size_t count)
 
 inline Char_Class operator!(const Char_Class& ccp){
-    if(ccp.empty())
+    if(ccp.empty()) // This is necessary, not just an optimization.
         return Char_Class(Char_Interval{0,yuki::UNICODE_MAX_32});
 
-    typedef Char_Class::const_interval_iterator const_interval_iterator;
+    typedef Char_Class::const_iterator const_iterator;
 
     Char_Class cc(yuki::reserve_tag,ccp.size()+1);
 
-    const_interval_iterator i1 = ccp.begin_interval();
-    const_interval_iterator i2 = i1+1;
-    const const_interval_iterator e = ccp.end_interval();
+    const_iterator i1 = ccp.begin();
+    const_iterator i2 = i1+1;
+    const const_iterator e = ccp.end();
 
     if(i1->lb!=0)
         cc.emplace_back(Char_Interval{0,(i1->lb)-1});
@@ -412,23 +423,20 @@ inline Char_Class operator!(const Char_Class& ccp){
     return cc;
 }
 
+// (A0+...+An)-B = (A0-B)+...+(An-B)
 inline Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs){
-    typedef Char_Class::const_interval_iterator const_interval_iterator;
+    typedef Char_Class::const_iterator const_iterator;
 
     Char_Class cc(yuki::reserve_tag,lhs.size()+rhs.size());
 
-    {
-    Char_Class::const_interval_iterator ii=lhs.begin_interval();
-    Char_Class::const_interval_iterator iie=lhs.end_interval();
-    for(;ii!=iie;++ii){
-        const Char_Interval ci=*ii;
-        const const_interval_iterator b = rhs.begin_interval();
-        const const_interval_iterator e = rhs.end_interval();
-        const const_interval_iterator left_fg = rhs.first_greater({ci.lb,ci.lb});
-        const const_interval_iterator right_fg = rhs.first_greater({ci.ub,ci.ub});
+    for(const Char_Interval ci : lhs){
+        const const_iterator b = rhs.begin();
+        const const_iterator e = rhs.end();
+        const const_iterator left_fg = rhs.OV_::first_greater({ci.lb,ci.lb});
+        const const_iterator right_fg = rhs.OV_::first_greater({ci.ub,ci.ub});
 
-        const_interval_iterator left = e;
-        const_interval_iterator right = e;
+        const_iterator left = e;
+        const_iterator right = e;
 
         if(left_fg!=b && (left_fg-1)->ub >= ci.lb)
             left = left_fg-1;
@@ -436,15 +444,19 @@ inline Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs){
         if(right_fg!=b && (right_fg-1)->ub >= ci.ub)
             right = right_fg-1;
 
+        // `left==e` iff. everything in `lhs` is greater than `ci.lb`, or the previous interval of `left_fg` does not contain `ci.lb`.
+        // Otherwise `left` denotes the interval that contains `ci.lb`.
+        // Ditto for `right`.
+
         if(left!=e){
             if(right!=e){ // 1
                 assert(cc.capacity()>=cc.size()+(right-left));
-                for(const_interval_iterator i=left+1; left!=right; ++left,++i)
+                for(const_iterator i=left+1; left!=right; ++left,++i)
                     cc.emplace_back(Char_Interval{left->ub+1,i->lb-1});
             }else{ // 2
                 right = right_fg;
                 assert(cc.capacity()>=cc.size()+(right-left));
-                for(const_interval_iterator i=left+1; left!=right; ++left,++i)
+                for(const_iterator i=left+1; left!=right; ++left,++i)
                     cc.emplace_back(Char_Interval{left->ub+1,i->lb-1});
                 cc.Vec_Base::back().ub = ci.ub;
             }
@@ -453,22 +465,21 @@ inline Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs){
                 left=left_fg;
                 assert(cc.capacity()>=cc.size()+(right-left+1));
                 cc.emplace_back(Char_Interval{ci.lb,left->lb-1});
-                for(const_interval_iterator i=left+1; left!=right; ++left,++i)
+                for(const_iterator i=left+1; left!=right; ++left,++i)
                     cc.emplace_back(Char_Interval{left->ub+1,i->lb-1});
             }else{ // 4
                 left=left_fg, right=right_fg;
+                assert(cc.capacity()>=cc.size()+(right-left+1));
                 if(left!=right){
-                    assert(cc.capacity()>=cc.size()+(right-left+1));
                     cc.emplace_back(Char_Interval{ci.lb,left->lb-1});
-                    for(const_interval_iterator i=left+1; left!=right; ++left,++i)
+                    for(const_iterator i=left+1; left!=right; ++left,++i)
                         cc.emplace_back(Char_Interval{left->ub+1,i->lb-1});
                     cc.Vec_Base::back().ub = ci.ub;
-                }
-                // else do nothing
+                }else
+                    cc.emplace_back(ci);
             }
         }
-    } // for(;ii!=iie;++ii)
-    }
+    } // for(const Char_Interval ci : lhs)
     return cc;
 } // Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs)
 

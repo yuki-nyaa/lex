@@ -1,42 +1,42 @@
 #define YUKI_LEX_DBG
 #define YUKI_LEX_DBG_FP stderr
-#include"../include/yuki/lex/lexer.hpp"
+#include"../include/yuki/lex/Lexer.hpp"
 
 // a?(?=a?)
 void aa(yuki::lex::Lexer& l) noexcept{
     using namespace yuki::literals;
     yuki::U8Char c;
-    yuki::lex::BufferedInput::Pos pos;
+    decltype(l.in.get_pos()) pos_head,pos_take=l.in.get_pos();
 
     static constexpr size_t HEAD_MAP[1] = {0};
 
   S0:
-    pos=l.in.get_peek();
-    l.FSM_HEAD_POST(HEAD_MAP[0],pos);
-    l.FSM_TAKE(1,HEAD_MAP[0]);
+    pos_head=l.in.get_pos();
+    l.FSM_HEAD_POST(HEAD_MAP[0],pos_head);
+    pos_take=l.FSM_TAIL(1,HEAD_MAP[0]);
     c=l.FSM_CHAR();
     if(c==U'a'_u8) goto S1;
-    return l.FSM_HALT();
+    return l.FSM_HALT(pos_take);
   S1:
-    //l.FSM_HEAD_POST(HEAD_MAP[0],pos);
-    pos=l.in.get_peek();
-    l.FSM_HEAD_POST(HEAD_MAP[0],pos);
-    l.FSM_TAKE(1,HEAD_MAP[0]);
+    //l.FSM_HEAD_POST(HEAD_MAP[0],pos_head);
+    pos_head=l.in.get_pos();
+    l.FSM_HEAD_POST(HEAD_MAP[0],pos_head);
+    pos_take=l.FSM_TAIL(1,HEAD_MAP[0]);
     c=l.FSM_CHAR();
     if(c==U'a'_u8) goto S2;
-    return l.FSM_HALT();
+    return l.FSM_HALT(pos_take);
   S2:
-    l.FSM_HEAD_POST(HEAD_MAP[0],pos);
-    l.FSM_TAKE(1,HEAD_MAP[0]);
-    return l.FSM_HALT();
+    l.FSM_HEAD_POST(HEAD_MAP[0],pos_head);
+    pos_take=l.FSM_TAIL(1,HEAD_MAP[0]);
+    return l.FSM_HALT(pos_take);
 }
 
 int main(){
     using namespace yuki::lex;
     FILE* f = fopen("aa.txt","r");
     Lexer lexer(f);
-    lexer.heads.emplace_back(0,0,0);
+    lexer.reserve_heads(8);
     lexer.fsm_code = &aa;
-    while(!lexer.in.at_eof() && lexer.scan()!=0)
+    while(lexer.in.getable() && lexer.scan()!=0)
         ;
 }

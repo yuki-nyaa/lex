@@ -1,0 +1,91 @@
+// Note: All the "raw" operations below does NOT read anything from `b8`. The reason is that, if the source encoding is not UTF-8(or compatible encodings like plain ASCII), then anything in `b8` will be CONVERTED, i.e. DIFFERENT from the original data.
+// Note: The `b8` becomes non-empty after a call to `peek_u8`, `peek_u8_cons` or `peek_u8_cons_np`. Calling a raw operation after any of these might produce unwanted results.
+
+yuki::U8Char get_u8(){
+    yuki::U8Char u8c;
+    if(p_b8<e_b8)
+        p_b8 += u8c.set(b8+p_b8);
+    else{
+        u8c = BufferedInput::get_u8();
+        if(u8c==yuki::EOF_U8)
+            return yuki::EOF_U8;
+    }
+
+    using namespace yuki::literals;
+    assert(u8c!=yuki::EOF_U8);
+    if(u8c=='\n'_u8){
+        ++lineno;
+        colno=1;
+    }else
+        ++colno;
+    return u8c;
+}
+
+/// @note The line terminator is NOT included in the returned string.
+std::string get_line(){
+    using namespace yuki::literals;
+    std::string str;
+    while(1){
+        const yuki::U8Char u8c = get_u8();
+        if(u8c==yuki::EOF_U8 || u8c=='\n'_u8)
+            return str;
+        if(u8c=='\r'_u8){
+            #ifndef NDEBUG
+            assert(get_u8()=='\n'_u8);
+            #else
+            get_u8();
+            #endif
+            return str;
+        }
+        char buf[4] = {};
+        str.append(buf,u8c.write_to(buf)-buf);
+    }
+    return str;
+}
+
+yuki::U8Char peek_u8(){
+    if(p_b8<e_b8)
+        return yuki::U8Char(b8+p_b8);
+
+    const yuki::U8Char u8c = BufferedInput::get_u8();
+    if(u8c==yuki::EOF_U8)
+        return yuki::EOF_U8;
+
+    if(e_b8+u8c.length()>s_b8){
+        if(e_b8-p_b8+u8c.length()<=s_b8)
+            realign_u8_buffer();
+        else
+            resize_u8_buffer(2*s_b8<YUKI_LEX_TARGET_LB_U8_BUFFER_SIZE ? YUKI_LEX_TARGET_LB_U8_BUFFER_SIZE : 2*s_b8);
+    }
+    e_b8 += u8c.write_to(b8+e_b8)-(b8+e_b8);
+    return u8c;
+}
+
+bool at_eol(){
+    using namespace yuki::literals;
+    const yuki::U8Char c = peek_u8();
+    return c=='\r'_u8
+        || c==yuki::EOF_U8
+        || c=='\n'_u8;
+}
+bool at_eoi(){
+    using namespace yuki::literals;
+    if(pp_b8<p_b8)
+        pp_b8=p_b8;
+    SG sg{p_b8,pp_b8,pp_b8-p_b8};
+    pp_b8=p_b8;
+    const yuki::U8Char c = peek_u8_cons_np();
+    if(c!=yuki::EOF_U8){
+        if(c=='\r'_u8){
+            const yuki::U8Char c2 = peek_u8_cons_np();
+            if(c2=='\n'_u8)
+                return peek_u8_cons_np()==yuki::EOF_U8;
+            else
+                return c2==yuki::EOF_U8;
+        }else if(c=='\n'_u8)
+            return peek_u8_cons_np()==yuki::EOF_U8;
+        else
+            return false;
+    }
+    return true;
+}

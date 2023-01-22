@@ -1,15 +1,11 @@
-#include"../char_class.hpp"
+#include"../Char_Class.hpp"
 #include<cstdio>
 
-void print_ci(yuki::lex::Char_Interval ci) {printf("[%u %u]",ci.lb,ci.ub);}
+void print_ci(const yuki::lex::Char_Interval ci) {printf("[%u %u]",ci.lb,ci.ub);}
 void print_cc(const yuki::lex::Char_Class& cc){
-    {
-    yuki::lex::Char_Class::const_interval_iterator ii=cc.begin_interval();
-    yuki::lex::Char_Class::const_interval_iterator iie=cc.end_interval();
-    for(;ii!=iie;++ii){
-        print_ci(*ii);
+    for(const  yuki::lex::Char_Interval ci : cc){
+        print_ci(ci);
         printf(" ");
-    }
     }
     printf("\n");
 }
@@ -21,7 +17,6 @@ int main(){
     cc.insert({0,100});
     cc.insert({200,300});
     cc.insert({400,500});
-
 
     cc.insert({50,120});
 
@@ -134,7 +129,8 @@ int main(){
     ccs[1].insert({300,300});
 
     // [100 150] [200 220] [300 300]
-    print_cc(merge_cc(ccs,2));
+    Char_Class merged; merged.merge_cc(ccs,2);
+    print_cc(merged);
     }
 
     printf("TEST3 DONE!\n\n");
@@ -144,10 +140,42 @@ int main(){
     cc.insert({10,15});
     cc.insert({100,100});
     cc.insert({120,130});
-    for(Char_Class::const_iterator i = cc.begin();!i.is_end();++i)
+    for(Char_Class::const_char_iterator i = cc.begin_char();!i.is_end();++i)
         printf("%u ",*i);
     printf("\n");
     }
 
     printf("TEST4 DONE!\n\n");
+
+    {
+    Char_Class cc({0,0x10FFFF});
+    cc = cc-Char_Class({U'\n',U'\n'});
+    print_cc(cc);
+
+    Char_Class cc2 = cc-Char_Class({U'\"',U'\"'});
+    print_cc(cc2);
+
+    Char_Class cc3({10,34});
+    print_cc(cc3-cc2);
+
+    Char_Class cc4 = cc+cc;
+    print_cc(cc4);
+    print_cc(Char_Class({U'\"',U'\"'})-cc4);
+    }
+    printf("TEST5 DONE!\n\n");
+
+    {
+    Char_Class cc;
+    cc.insert(100);
+    cc.insert(102);
+    cc.insert(101);
+    cc.insert(50);
+    cc.insert(51);
+    cc.insert(99);
+    cc.insert(70);
+    cc.insert(200);
+    cc.insert(25);
+    print_cc(cc);
+    }
+    printf("TEST6 DONE!\n\n");
 }

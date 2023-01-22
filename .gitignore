@@ -4,3 +4,5 @@ release
 *.code-workspace
 *.exe
 *.log
+*.txt
+!CMakeLists.txt

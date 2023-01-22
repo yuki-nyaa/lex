@@ -1,4 +1,4 @@
-#include"../fsm.hpp"
+#include"../FSM.hpp"
 int main(){
     using namespace yuki::lex;
     FSM_Factory<> ff;

@@ -1,0 +1,9 @@
+#pragma once
+
+#define YUKI_LEX_VERSION_MAJOR @yuki.lex_VERSION_MAJOR@
+#define YUKI_LEX_VERSION_MINOR @yuki.lex_VERSION_MINOR@
+
+#cmakedefine YUKI_LEX_META_DBG
+
+#define YUKI_LEX_IND "    "
+#define YUKI_LEX_HIND "  "
