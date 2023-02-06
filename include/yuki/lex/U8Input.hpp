@@ -11,7 +11,7 @@ struct U8Input_Poss{
     size_t colno = 1;
     size_t colno_byte = 1;
     yuki::U8Char c_prev = yuki::EOF_U8;
-    constexpr void reset_pos(){
+    constexpr void reset_poss(){
         u_count = 0;
         byte_count = 0;
         lineno = 1;
@@ -176,9 +176,10 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
     using typename ByteInput_Base_With_Pos<U8Input_Poss>::Pos;
     using ByteInput_Base_With_Pos<U8Input_Poss>::get_pos;
     using ByteInput_Base_With_Pos<U8Input_Poss>::set_pos;
-    using ByteInput_Base_With_Pos<U8Input_Poss>::take;
+    using ByteInput_Base_With_Pos<U8Input_Poss>::matched;
+    using ByteInput_Base_With_Pos<U8Input_Poss>::clear_matched;
 
-    using U8Input_Poss::reset_pos;
+    using U8Input_Poss::reset_poss;
 
     bool at_bol() const {return colno==1;}
     using ByteInput_Base::at_eol;

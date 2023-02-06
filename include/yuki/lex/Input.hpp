@@ -176,7 +176,7 @@ struct Input{
             }
         }
     }
-    constexpr std::string_view take(const Pos pos_begin) const {
+    constexpr std::string_view matched(const Pos pos_begin) const {
         assert(source_type_==Source_Type::S || source_type_==Source_Type::SV);
         switch(source_type_){
             case Source_Type::S: assert(source_.s>=pos_begin);return {pos_begin,source_.s};
@@ -184,6 +184,7 @@ struct Input{
             default: return {}; // Unreachable
         }
     }
+    constexpr void clear_matched() const {}
 
     bool at_bol() const = delete;
     bool at_eol() const {

@@ -2,6 +2,7 @@ build
 release
 .vscode
 *.code-workspace
+*.o
 *.exe
 *.log
 *.txt

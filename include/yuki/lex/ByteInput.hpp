@@ -160,7 +160,7 @@ struct ByteInput_Base_With_Pos : protected ByteInput_Base, protected Ps{
     ByteInput_Base_With_Pos(ByteInput_Base_With_Pos&& other) noexcept :
         ByteInput_Base(static_cast<ByteInput_Base&&>(other)),
         Ps(static_cast<Ps&&>(other))
-    {other.Ps::reset_pos();}
+    {other.Ps::reset_poss();}
 
     ByteInput_Base_With_Pos& operator=(const ByteInput_Base_With_Pos& other) noexcept = default;
 
@@ -168,16 +168,17 @@ struct ByteInput_Base_With_Pos : protected ByteInput_Base, protected Ps{
         if(this!=&other){
             ByteInput_Base::operator=(static_cast<ByteInput_Base&&>(other));
             Ps::operator=(static_cast<Ps&&>(other));
-            other.Ps::reset_pos();
+            other.Ps::reset_poss();
         }
         return *this;
     }
 
     struct Pos{
         friend ByteInput_Base_With_Pos<Ps>;
+        constexpr Pos() noexcept = default;
       private:
         union{
-        size_t pp_off;
+        size_t pp_off=0;
         Input::Pos pp_direct;
         };
         Ps ps;
@@ -188,9 +189,18 @@ struct ByteInput_Base_With_Pos : protected ByteInput_Base, protected Ps{
             ps(ps_p),
             unbuffered(ub_p)
         {}
+        constexpr Pos(const Input::Pos pp_direct_p,const Ps ps_p,const bool ub_p) noexcept :
+            pp_direct(pp_direct_p),
+            ps(ps_p),
+            unbuffered(ub_p)
+        {}
         #else
         constexpr Pos(const size_t pp_off_p,const Ps ps_p) noexcept :
             pp_off(pp_off_p),
+            ps(ps_p)
+        {}
+        constexpr Pos(const Input::Pos pp_direct_p,const Ps ps_p) noexcept :
+            pp_direct(pp_direct_p),
             ps(ps_p)
         {}
         #endif
@@ -219,27 +229,23 @@ struct ByteInput_Base_With_Pos : protected ByteInput_Base, protected Ps{
         Ps::operator=(pos.ps);
     }
 
-    std::string_view take(const Pos pos_begin){
+    std::string_view matched(const Pos pos_begin) const {
         assert(!pos_begin.unbuffered==needs_buffer());
-        if(needs_buffer()){
-            const std::string_view ret = {br+p_br,pp_br-p_br};
-            p_br=pp_br;
-            return ret;
-        }else
-            return Input::take(pos_begin.pp_direct);
+        return needs_buffer() ? std::string_view{br+p_br,pp_br-p_br} : Input::matched(pos_begin.pp_direct);
     }
+    void clear_matched() {if(needs_buffer()) p_br=pp_br;}
 
     // Note: The following functions discard everything in the buffer.
-    void set_source() {discard_buffer();Input::set_source();Ps::reset_pos();}
-    void set_source(FILE* const f) {discard_buffer();Input::set_source(f);Ps::reset_pos();}
-    void set_source(const char* const s,const bool fb=false) {discard_buffer();Input::set_source(s);Ps::reset_pos();force_buffering=fb;}
-    void set_source(const char* const s,const size_t sz,const bool fb=false) {discard_buffer();Input::set_source(s,sz);Ps::reset_pos();force_buffering=fb;}
+    void set_source() {discard_buffer();Input::set_source();Ps::reset_poss();}
+    void set_source(FILE* const f) {discard_buffer();Input::set_source(f);Ps::reset_poss();}
+    void set_source(const char* const s,const bool fb=false) {discard_buffer();Input::set_source(s);Ps::reset_poss();force_buffering=fb;}
+    void set_source(const char* const s,const size_t sz,const bool fb=false) {discard_buffer();Input::set_source(s,sz);Ps::reset_poss();force_buffering=fb;}
 }; // struct ByteInput_Base_With_Pos
 
 
 struct Byte_Input_Poss{
     size_t byte_count=0;
-    constexpr void reset_pos() {byte_count=0;}
+    constexpr void reset_poss() {byte_count=0;}
     constexpr bool at_boi() const {return byte_count==0;}
 };
 
@@ -330,9 +336,10 @@ struct ByteInput_Tp : private ByteInput_Base_With_Pos<Byte_Input_Poss>{
     using typename ByteInput_Base_With_Pos<Byte_Input_Poss>::Pos;
     using ByteInput_Base_With_Pos<Byte_Input_Poss>::get_pos;
     using ByteInput_Base_With_Pos<Byte_Input_Poss>::set_pos;
-    using ByteInput_Base_With_Pos<Byte_Input_Poss>::take;
+    using ByteInput_Base_With_Pos<Byte_Input_Poss>::matched;
+    using ByteInput_Base_With_Pos<Byte_Input_Poss>::clear_matched;
 
-    using Byte_Input_Poss::reset_pos;
+    using Byte_Input_Poss::reset_poss;
 
     // It's unlikely that one needs to check anchors when lexing simple bytes. But the anchor-checking functions that will not incur an overhead are provided anyway.
 

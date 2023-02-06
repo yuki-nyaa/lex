@@ -32,11 +32,21 @@ add_custom_target(Regex_Lexer
     DEPENDS Regex_Lexer.cpp Regex_Lexer.h)
 
 add_custom_command(OUTPUT Regex_Parser.cpp Regex_Parser.h Regex_Parser.token.hpp
-    COMMAND ypg -i ${PROJECT_SOURCE_DIR}/Regex_Parser.y -o Regex_Parser.cpp
+    COMMAND ypg -i ${PROJECT_SOURCE_DIR}/Regex_Parser.y -o Regex_Parser.cpp -l Regex_Parser.log
     DEPENDS Regex_Parser.y
     COMMENT "YPG-ing Regex_Parser.y")
 add_custom_target(Regex_Parser
     DEPENDS Regex_Parser.cpp Regex_Parser.h Regex_Parser.token.hpp)
 
-add_executable(ylex main.cpp Regex_Lexer.cpp Regex_Parser.cpp)
+add_custom_command(OUTPUT Meta_Lexer.cpp Meta_Lexer.h
+    COMMAND reflex ${PROJECT_SOURCE_DIR}/Meta_Lexer.l
+    DEPENDS Meta_Lexer.l
+    COMMENT "RE/flex-ing Meta_Lexer.l")
+add_custom_target(Meta_Lexer
+    DEPENDS Meta_Lexer.cpp Meta_Lexer.h)
+
+add_executable(ylex main.cpp Regex_Lexer.cpp Regex_Parser.cpp Meta_Lexer.cpp write_fsm_code.cpp)
 target_link_libraries(ylex reflex fmt)
+
+install(DIRECTORY include/yuki TYPE INCLUDE)
+install(TARGETS ylex RUNTIME)

@@ -1,17 +1,18 @@
+#define YUKI_LEX_META_DBG
 #include"../Char_Class.hpp"
-#include<cstdio>
 
-void print_ci(const yuki::lex::Char_Interval ci) {printf("[%u %u]",ci.lb,ci.ub);}
 void print_cc(const yuki::lex::Char_Class& cc){
-    for(const  yuki::lex::Char_Interval ci : cc){
-        print_ci(ci);
-        printf(" ");
-    }
+    yuki::lex::print_cc(stdout,cc);
     printf("\n");
 }
 
 int main(){
     using namespace yuki::lex;
+    {
+    Char_Class cc0{yuki::from_ordered_tag,{{0x6c,0x6c},{0x44,0x44},{0x79,0x79},{0x7d,0x7d}}};
+    Char_Class cc1{yuki::from_ordered_tag,{{0,0x9},{0xb,0xc},{0xe,0x10ffff}}};
+    print_cc(cc1-cc0);
+    }
     {
     Char_Class cc;
     cc.insert({0,100});

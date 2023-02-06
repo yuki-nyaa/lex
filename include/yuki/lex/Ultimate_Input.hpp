@@ -118,7 +118,7 @@ struct Ultimate_Input_Poss{
     size_t colno = 1;
     size_t colno_byte = 1;
     yuki::U8Char c_prev = yuki::EOF_U8;
-    constexpr void reset_pos(){
+    constexpr void reset_poss(){
         u_count=0;
         byte_count=0;
         lineno=1;
@@ -201,7 +201,7 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
         other.e_b8 = 0;
         other.p_b8 = 0;
         other.pp_b8 = 0;
-        other.reset_pos();
+        other.reset_poss();
     }
 
     /// @note The u8 buffer will NOT be resized if the data in `other` fit. The copied data will become left-aligned.
@@ -238,7 +238,7 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
             other.e_b8 = 0;
             other.p_b8 = 0;
             other.pp_b8 = 0;
-            other.reset_pos();
+            other.reset_poss();
         }
         return *this;
     }
@@ -289,7 +289,7 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
     void set_source_impl_(const Ts... ts){
         discard_u8_buffer();
         BufferedInput_Base::set_source(ts...);
-        reset_pos();
+        reset_poss();
     }
   public:
     void set_source() {set_source_impl_();}
@@ -363,8 +363,9 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
 
     struct Pos{
         friend Ultimate_Input_Tp;
+        constexpr Pos() noexcept = default;
       private:
-        size_t off;
+        size_t off=0;
         Ultimate_Input_Poss uip;
         constexpr Pos(const size_t off_p,const Ultimate_Input_Poss uip_p) noexcept :
             off(off_p),
@@ -378,13 +379,10 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
         Ultimate_Input_Poss::operator=(pos.uip);
     }
 
-    std::string_view take(const Pos){
-        const std::string_view ret = {b8+p_b8,pp_b8-p_b8};
-        p_b8=pp_b8;
-        return ret;
-    }
+    std::string_view matched(const Pos) const {return {b8+p_b8,pp_b8-p_b8};}
+    void clear_matched() {p_b8=pp_b8;}
 
-    using Ultimate_Input_Poss::reset_pos;
+    using Ultimate_Input_Poss::reset_poss;
 
     bool at_bol() const {return colno==1;}
     bool at_eol(){

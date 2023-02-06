@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+../../build/ylex -i sample.l -o sample.cpp -h sample.h
+g++ -I../../include -I/usr/local/include -std=c++20 -Wextra -g -O0 -c sample.cpp -o sample.o
+g++ -I../../include -I/usr/local/include -std=c++20 -Wextra -g -O0 -c main.cpp -o main.o
+g++ -L/usr/local/lib sample.o main.o -lfmt -o main.exe

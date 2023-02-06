@@ -483,4 +483,38 @@ inline Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs){
     return cc;
 } // Char_Class operator-(const Char_Class& lhs,const Char_Class& rhs)
 
+
+inline const Char_Class cc_dot{yuki::from_ordered_tag,{{0,U'\n'-1},{U'\n'+1,U'\r'-1},{U'\r'+1,0x10FFFF}}};
+inline const Char_Class cc_dot_ascii{yuki::from_ordered_tag,{{0,U'\n'-1},{U'\n'+1,U'\r'-1},{U'\r'+1,127}}};
+inline const Char_Class cc_dot_byte{yuki::from_ordered_tag,{{0,U'\n'-1},{U'\n'+1,U'\r'-1},{U'\r'+1,255}}};
+inline const Char_Class cc_all = Char_Interval{0,0x10FFFF};
+inline const Char_Class cc_all_byte = Char_Interval{0,255};
+inline const Char_Class cc_newline{yuki::from_ordered_tag,{{U'\n',U'\n'},{U'\r',U'\r'}}};
+// POSIX catetories
+inline const Char_Class cc_ascii = Char_Interval{0,127};
+inline const Char_Class cc_space{yuki::from_ordered_tag,{{U'\t',U'\r'},{U' ',U' '}}};
+inline const Char_Class cc_xdigit{yuki::from_ordered_tag,{{U'0',U'9'},{U'A',U'F'},{U'a',U'f'}}};
+inline const Char_Class cc_cntrl{yuki::from_ordered_tag,{{0,0x1F},{127,127}}};
+inline const Char_Class cc_print = Char_Interval{0x20,0x7E};
+inline const Char_Class cc_alnum{yuki::from_ordered_tag,{{U'0',U'9'},{U'A',U'Z'},{U'a',U'z'}}};
+inline const Char_Class cc_alpha{yuki::from_ordered_tag,{{U'A',U'Z'},{U'a',U'z'}}};
+inline const Char_Class cc_blank{yuki::from_ordered_tag,{{U'\t',U'\t'},{U' ',U' '}}};
+inline const Char_Class cc_digit = Char_Interval{U'0',U'9'};
+inline const Char_Class cc_graph = Char_Interval{0x21,0x7E};
+inline const Char_Class cc_lower = Char_Interval{U'a',U'z'};
+inline const Char_Class cc_punct{yuki::from_ordered_tag,{{0x21,0x2F},{0x3A,0x40},{0x5B,0x60},{0x7B,0x7E}}};
+inline const Char_Class cc_upper = Char_Interval{U'A',U'Z'};
+inline const Char_Class cc_word{yuki::from_ordered_tag,{{U'0',U'9'},{U'A',U'Z'},{U'_',U'_'},{U'a',U'z'}}};
+// One unicode category
+inline const Char_Class cc_uspace{yuki::from_ordered_tag,{{U'\t',U'\r'},{U' ',U' '},{0x85,0x85},{0xA0,0xA0},{0x1680,0x1680},{0x2000,0x200A},{0x2028,0x2029},{0x202F,0x202F},{0x205F,0x205F},{0x3000,0x3000}}};
 } // namespace yuki::lex
+
+#ifdef YUKI_LEX_META_DBG
+#include<cstdio>
+namespace yuki::lex{
+inline void print_cc(FILE* const out,const Char_Class& cc){
+    for(const Char_Interval ci : cc)
+        fprintf(out,"[%zx,%zx] ",(size_t)ci.lb,(size_t)ci.ub);
+}
+}
+#endif

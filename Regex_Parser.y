@@ -1,30 +1,25 @@
 %nterm Regex {FSM:;};
-%nterm Chars {Char_Class:;};
 %nterm Char_Class {Char_Class:;};
 %nterm Char_Interval {Char_Interval:;};
 %nterm Char_Intervals {Char_Class:;};
 %term amount {Amount:;};
 %term character {char32_t:;};
 %term meta_char {int:;};
+%term basic_char_class {Char_Class:;};
 %term paren_l "(" {};
 %term paren_r ")" {};
-%term brace_l "{" {};
-%term brace_r "}" {};
 %term sqparen_l "[" {};
 %term sqparen_r "]" {};
 %term ast "*" {};
 %term plus "+" {};
 %term qmark "?" {};
-%term eq "=" {};
 %term qe "?=" {};
 %term lazy "?l:" {};
 %term dlazy "?d:" {};
 %term vbar "|" {};
-%term emark "!" {};
 %term hat "^" {};
-%term dot "." {};
 %term to "-" {};
-%term comma "," {};
+%term esc_N {};
 
 %default_left
 %right amount "*" "+" "?"
@@ -59,21 +54,31 @@
   private:
     FSM_Factory<Node_Pool<FSM_Node,YUKI_LEX_FSM_FACTORY_POOL_BLOCK>> ff;
     size_t branch=0;
-    static inline const Char_Class cc_dot{yuki::from_ordered_tag,{{0,static_cast<unsigned char>('\n')-1},{static_cast<unsigned char>('\n')+1,0x10FFFF}}};
-  public:
-    yuki::Vector<FSM> fsms{yuki::reserve_tag,YUKI_LEX_FSMS_RESERVE};
-    size_t max_branch_size = 0;
-    size_t max_branch_number = 0;
+    unsigned* errors=nullptr;
 
+    yuki::Vector<FSM> fsms_{yuki::reserve_tag,YUKI_LEX_FSMS_RESERVE};
+    size_t max_branch_size_ = 0;
+    size_t max_branch_number_ = 0;
+    yuki::Vector<size_t> heads_;
+  public:
     void recycle(){
         ff.recycle();
         branch=0;
-        fsms.clear();
-        max_branch_size=0;
-        max_branch_number=0;
+        fsms_.clear();
+        max_branch_size_=0;
+        max_branch_number_=0;
+        heads_.clear();
     }
 
-    Regex_Parser(Regex_Lexer* const l=nullptr) noexcept : lexer(l) {}
+    Regex_Parser() noexcept = default;
+    explicit Regex_Parser(Regex_Lexer* const l,unsigned* const e) noexcept : lexer(l), errors(e) {}
+
+    size_t total_branches() const {return branch;}
+    const FSM* fsms() const {return fsms_.begin();}
+    size_t fsms_size() const {return fsms_.size();}
+    size_t max_branch_size() const {return max_branch_size_;}
+    size_t max_branch_number() const {return max_branch_number_;}
+    const auto& heads() const {return heads_;}
 }
 
 %%
@@ -83,11 +88,11 @@ Goal_:
         {
             FSM fsm = $0;
             fsm.make_accept();
-            if(fsm.size>max_branch_size)
-                max_branch_size = fsm.size;
-            if(fsm.accept->number > max_branch_number)
-                max_branch_number = fsm.accept->number;
-            fsms.emplace_back(fsm);
+            if(fsm.size>max_branch_size_)
+                max_branch_size_ = fsm.size;
+            if(fsm.accept->number > max_branch_number_)
+                max_branch_number_ = fsm.accept->number;
+            fsms_.emplace_back(fsm);
             ++branch;
             ff.reset_number();
         }
@@ -124,7 +129,14 @@ Regex:
     |
     "(" "?=" Regex ")"
         {$2.make_head()}
-        {}
+        {
+            if(!heads_.empty() && heads_.back()==branch){
+                fprintf(stderr,"Error: Multiple lookaheads in branch %zu!\n",branch);
+                assert(errors);
+                ++*errors;
+            }else
+                heads_.emplace_back(branch);
+        }
     |
     "(" "?l:" Regex ")"
         {$2.make_lazy()}
@@ -149,7 +161,21 @@ Regex:
     "^"
         {ff.make_fsm(branch,MetaChar::BOL)}
         {}
+    |
+    esc_N
+        {ff.make_esc_N(branch)}
+        {}
     ;
+
+//Alts:
+//    Alts "|" Regex
+//        {($0.emplace_back($2),std::move($0))}
+//        {}
+//    |
+//    Regex "|" Regex
+//        {yuki::from_variadic_tag,$0,$2}
+//        {}
+//    ;
 
 Char_Class:
     "[" Char_Interval "]"
@@ -180,8 +206,8 @@ Char_Class:
         {$1-$3}
         {}
     |
-    "."
-        {cc_dot}
+    basic_char_class
+        {std::move($0)}
         {}
     ;
 

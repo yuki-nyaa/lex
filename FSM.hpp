@@ -175,15 +175,19 @@ struct FSM_Edges{
 
     void emplace(Char_Class&& cc,const FSM_Node* const n) {vec_.emplace_back(std::move(cc),n);}
 
+    /// @pre `*this` and `other` cannot both have an epsilon_back edge at the same time.
+    /// @pre `*this` and `other` cannot both have a meta edge at the same time.
     void merge(FSM_Edges&& other){
         for(FSM_Edge& e : other.vec_)
             vec_.emplace_back(std::move(e)), e.~FSM_Edge();
         other.vec_.deallocate();
         epsilons.insert(epsilons.end(),other.epsilons.begin(),other.epsilons.size());
         other.epsilons.reset();
+        assert(!(epsilon_back && other.epsilon_back));
         if(!epsilon_back)
             epsilon_back = other.epsilon_back;
         other.epsilon_back = nullptr;
+        assert(!(meta.target && other.meta.target));
         meta = other.meta;
         other.meta.clear();
     }
@@ -292,6 +296,24 @@ struct FSM_Factory : private A{
         return {lhs.start,accept_new,lhs.size+rhs.size};
     }
 
+    /// @pre The `fsms` should not intersect.
+    FSM make_alt(const size_t branch,FSM* fsms,size_t fsms_size){
+        FSM_Node* const accept_new = A::allocate();
+        ::new(accept_new) FSM_Node{branch,num_next++};
+        // Except for the first fsm all other fsms' `.start` will be discarded.
+        fsms->accept->edges.epsilons.emplace_back(accept_new);
+        FSM_Node* const start = fsms->start;
+        size_t total = fsms->size;
+        assert(fsms_size>1);
+        --fsms_size; ++fsms;
+        for(;fsms_size;--fsms_size,++fsms){
+            start->edges.merge(std::move(fsms->start->edges));
+            fsms->accept->edges.epsilons.emplace_back(accept_new);
+            total += fsms->size;
+        }
+        return {start,accept_new,total};
+    }
+
     // number change: 0->1  -->  1->0->2
     FSM make_ast(const size_t branch,const FSM fsm){
         FSM_Node* const start_new = A::allocate();
@@ -322,6 +344,13 @@ struct FSM_Factory : private A{
     FSM make_amount(const size_t branch,const FSM fsm,const Amount amount){
         (void)branch;(void)amount;
         return fsm;
+    }
+
+    /// \r?\n
+    FSM make_esc_N(const size_t branch){
+        FSM fsm = make_fsm(branch,Char_Class({U'\r',U'\r'}));
+        fsm = make_qmark(branch,fsm);
+        return fsm.concat(Char_Class({U'\n',U'\n'}),make_node(branch));
     }
 }; // struct FSM_Factory<A>
 
