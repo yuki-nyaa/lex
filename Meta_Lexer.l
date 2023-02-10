@@ -1,18 +1,17 @@
-%option fast unicode nodefault noline
-%option outfile="Meta_Lexer.cpp" header-file="Meta_Lexer.h"
-%option namespace="yuki::lex" prefix="yuki_lex_meta" lexer="Meta_Lexer" lex="lex" token-type="int"
+%namespace yuki::lex
+%lexer Meta_Lexer
 
-%code_cpptop{
+%code cpp_top{
 #include"cconfig"
 }
 
-%code_htop{
+%code h_top{
 #include<unordered_map>
 #include<string>
 #include<yuki/Vector.hpp>
 #include"cmd.hpp"
-#include"Regex_Lexer.h"
-#include"Regex_Parser.h"
+#include"gen/Regex_Lexer.h"
+#include"gen/Regex_Parser.h"
 
 namespace yuki::lex{
 void write_fsm_code(
@@ -24,13 +23,13 @@ void write_fsm_code(
     unsigned& errors,
     const char* const fsm_name
     #ifdef YUKI_LEX_META_DBG
-    ,Cmd_Data::Debug_Options debug_options = {nullptr,nullptr}
+    ,Cmd_Data::Debug_Options debug_options = {}
     #endif
 );
 }
 }
 
-%code_class{
+%code class{
   private:
     Cmd_Data cmd_data;
     std::string nspace;
@@ -74,13 +73,13 @@ void write_fsm_code(
     unsigned brace_level;
     bool initial_encountered = false;
     bool no_default_ctor = false;
-    decltype(INITIAL) state_prev;
+    decltype(State::INITIAL) state_prev;
 
     std::unordered_map<std::string,std::string> macro_table;
     yuki::Vector<std::string_view> macro_stack;
 
-    Regex_Lexer rl{&errors_};
-    Regex_Parser rp{&rl,&errors_};
+    Regex_Lexer rl{errors_};
+    Regex_Parser rp{&rl,errors_};
 
     std::string str_temp;
 
@@ -190,35 +189,32 @@ void write_fsm_code(
   public:
     auto errors() const {return errors_;}
 
-    Meta_Lexer(yuki::lex::Cmd_Data&& cmd_data_p) noexcept :
-        AbstractBaseLexer(reflex::Input(cmd_data_p.fp_in),std::cout),
+    template<typename... Args>
+    Meta_Lexer(yuki::lex::Cmd_Data&& cmd_data_p,Args&&... args) noexcept :
+        in(cmd_data_p.fp_in),
         cmd_data(std::move(cmd_data_p)),
         code_htable(16)
     {}
 }
 
-%x O_NSPACE O_LEXER O_ICLASS O_IHEADER O_DPREFIX O_FCNSPACE O_TTYPE O_TPLEXER MACRO_DEF_GOBBLE_SPACE MACRO_DEF CODE0 CODE1 C_LIT S_LIT SEC1 GOBBLE_NEWLINE_TO_REGEX REGEX POST_REGEX REGEX_CODE DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX REGEX_CODE_EOF C_LIT_EOF S_LIT_EOF REGEX_CODE_DEFAULT C_LIT_DEFAULT S_LIT_DEFAULT REGEX_CODE_BEFORE C_LIT_BEFORE S_LIT_BEFORE SEC2
-
-N    \r?\n
-
 %%
 <INITIAL>{
-\%namespace\p{Space}*    {start(O_NSPACE);}
-\%lexer\p{Space}*    {start(O_LEXER);}
-\%input[_\-]class\p{Space}*    {start(O_ICLASS);}
-\%input[_\-]header\p{Space}*    {start(O_IHEADER);}
-\%debug[_\-]prefix\p{Space}*    {start(O_DPREFIX);}
-\%fsm[_\-]codes[_\-]namespace\p{Space}*    {start(O_FCNSPACE);}
-\%token[_\-]type\p{Space}*    {start(O_TTYPE);}
-\%no[_\-]default[_\-]ctor\p{Space}*    {no_default_ctor=true;}
-\%template\p{Space}*<.*    {template_decl.assign(text()+1,size()-1);}
-\%templated[_\-]lexer\p{Space}*    {start(O_TPLEXER);}
+\%namespace\u{Space}*    {state=State::O_NSPACE;}
+\%lexer\u{Space}*    {state=State::O_LEXER;}
+\%input[_\-]class\u{Space}*    {state=State::O_ICLASS;}
+\%input[_\-]header\u{Space}*    {state=State::O_IHEADER;}
+\%debug[_\-]prefix\u{Space}*    {state=State::O_DPREFIX;}
+\%fsm[_\-]codes[_\-]namespace\u{Space}*    {state=State::O_FCNSPACE;}
+\%token[_\-]type\u{Space}*    {state=State::O_TTYPE;}
+\%no[_\-]default[_\-]ctor\u{Space}*    {no_default_ctor=true;}
+\%template\u{Space}*<.*    {matched.remove_prefix(1); template_decl=matched;}
+\%templated[_\-]lexer\u{Space}*    {state=State::O_TPLEXER;}
 
-\%code\p{Space}*    {current_regex.clear(); start(CODE0);}
+\%code\u{Space}*    {current_regex.clear(); state=State::CODE0;}
 
-[a-zA-Z_][0-9a-zA-Z_]*    {current_regex.assign(text(),size()); start(MACRO_DEF_GOBBLE_SPACE);}
+[a-zA-Z_][0-9a-zA-Z_]*    {current_regex=matched; state=State::MACRO_DEF_GOBBLE_SPACE;}
 
-\%\%\p{Space}*    {
+\%\%\u{Space}*    {
     if(debug_prefix.empty())
         debug_prefix.append("YUKI_LEX_").append(lexer).append("_DBG");
     if(fsm_codes_nspace.empty())
@@ -233,77 +229,77 @@ N    \r?\n
         templated_lexer = lexer;
     }
     write_h0();
-    start(SEC1);
+    state=State::SEC1;
 }
 
-\p{Space}+    {}
+\u{Space}+    {}
 
-\/\/.*{N}    {} // Comments.
+\/\/.*\R    {} // Comments.
 }
 
 
 <O_NSPACE>{
-.*   {nspace.assign(text(),size());start(INITIAL);}
+.*   {nspace=matched;state=State::INITIAL;}
 }
 
 <O_LEXER>{
-.*    {lexer.assign(text(),size());start(INITIAL);}
+.*    {lexer=matched;state=State::INITIAL;}
 }
 
 <O_ICLASS>{
-.*   {input_class.assign(text(),size());start(INITIAL);}
+.*   {input_class=matched;state=State::INITIAL;}
 }
 
 <O_IHEADER>{
-.*   {input_header.assign(text(),size());start(INITIAL);}
+.*   {input_header=matched;state=State::INITIAL;}
 }
 
 <O_DPREFIX>{
-.*    {debug_prefix.assign(text(),size());start(INITIAL);}
+.*    {debug_prefix=matched;state=State::INITIAL;}
 }
 
 <O_FCNSPACE>{
-.*    {fsm_codes_nspace.assign(text(),size());start(INITIAL);}
+.*    {fsm_codes_nspace=matched;state=State::INITIAL;}
 }
 
 <O_TTYPE>{
-.*    {token_type.assign(text(),size());start(INITIAL);}
+.*    {token_type=matched;state=State::INITIAL;}
 }
 
 <O_TPLEXER>{
-.*    {templated_lexer.assign(text(),size());start(INITIAL);}
+.*    {templated_lexer=matched;state=State::INITIAL;}
 }
 
 
 <MACRO_DEF_GOBBLE_SPACE>{
-\p{Space}+    {}
-<<DEFAULT>>    {start(MACRO_DEF);}
+\u{Space}+    {}
+<<DEFAULT>>    {state=State::MACRO_DEF;}
 }
 
 
 <MACRO_DEF>{
-.*(?={N})    {
+.*(?=\R)    {
     str_temp.assign("(");
-    str_temp.append(text(),size()).push_back(')');
+    str_temp.append(matched).push_back(')');
     const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
     if(!emplace_ret.second){
         fprintf(stderr,"Error: Multiple definition of macro \"%s\"!\n",emplace_ret.first->first.c_str());
         ++errors_;
     }
-    start(INITIAL);
+    state=State::INITIAL;
 }
 }
 
 
 <CODE0>{
-\p{Space}+    {}
-\/\/.*{N}    {} // Comments.
+\u{Space}+    {}
+\/\/.*\R    {} // Comments.
 \{    {
     brace_level=0;
     str_temp.clear();
-    start(CODE1);
+    state=State::CODE1;
 }
-.    {current_regex.append(text(),size());}
+.    {current_regex.append(matched);}
 }
 
 
@@ -320,63 +316,63 @@ N    \r?\n
             fprintf(stderr,"Error: Multiple definition of code section \"%s\"!\n",emplace_ret.first->first.c_str());
             ++errors_;
         }
-        start(INITIAL);
+        state=State::INITIAL;
     }
 }
-'    {str_temp.push_back('\''); state_prev=CODE1; start(C_LIT);}
-\"    {str_temp.push_back('\"'); state_prev=CODE1; start(S_LIT);}
-.|\n    {str_temp.append(text(),size());}
+'    {str_temp.push_back('\''); state_prev=State::CODE1; state=State::C_LIT;}
+"    {str_temp.push_back('\"'); state_prev=State::CODE1; state=State::S_LIT;}
+\u{All}   {str_temp.append(matched);}
 }
 
 
 <C_LIT>{
-\\.    {str_temp.append(text(),size());}
-'    {str_temp.push_back('\''); start(state_prev);}
-.|\n    {str_temp.append(text(),size());}
+\\.    {str_temp.append(matched);}
+'    {str_temp.push_back('\''); state=state_prev;}
+\u{All}    {str_temp.append(matched);}
 }
 
 
 <S_LIT>{
-\\.    {str_temp.append(text(),size());}
-\"    {str_temp.push_back('\"'); start(state_prev);}
-.|\n    {str_temp.append(text(),size());}
+\\.    {str_temp.append(matched);}
+"    {str_temp.push_back('\"'); state=state_prev;}
+\u{All}    {str_temp.append(matched);}
 }
 
 
 <SEC1>{
 <[^>]*>\{    {
-    if(strncmp(text()+1,"INITIAL",7)==0)
+    current_fsm_name=matched.substr(1,matched.size()-3);
+    if(current_fsm_name.compare("INITIAL")==0)
         initial_encountered=true;
-    current_fsm_name.assign(text()+1,size()-3);
     rp.recycle();
-    start(GOBBLE_NEWLINE_TO_REGEX);
+    state=State::GOBBLE_NEWLINE_TO_REGEX;
 }
 
-\%\%\p{Space}*    {
+\%\%\u{Space}*    {
     if(!initial_encountered){
         fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
         ++errors_;
     }
     write_lex_and_h1();
-    start(SEC2);
+    state=State::SEC2;
 }
 
-\p{Space}+    {}
+\u{Space}+    {}
 
-\/\/.*{N}    {} // Comments.
+\/\/.*\R    {} // Comments.
 }
 
 
 <GOBBLE_NEWLINE_TO_REGEX>{
-{N}+    {}
-<<DEFAULT>>    {start(REGEX);}
+\R+    {}
+<<DEFAULT>>    {state=State::REGEX;}
 }
 
 
 <REGEX>{
-\p{Space}+\{\p{Space}*    {
+\u{Space}+\{\u{Space}*    {
     process_macro(str_temp,current_regex);
-    rl.in(current_regex);
+    rl.in.set_source(current_regex.data(),current_regex.size());
     rp.parse();
     #ifndef YUKI_LEX_MAX_REGEX_PRINTABLE
     #define YUKI_LEX_MAX_REGEX_PRINTABLE 256
@@ -385,24 +381,24 @@ N    \r?\n
         str_temp.resize(YUKI_LEX_MAX_REGEX_PRINTABLE);
     current_regex=std::move(str_temp);
     brace_level=0;
-    start(REGEX_CODE);
+    state=State::REGEX_CODE;
 }
-<<EOF>>\p{Space}+\{\p{Space}*    {
+<<EOF>>\u{Space}+\{\u{Space}*    {
     brace_level=0;
     current_eof.clear();
-    start(REGEX_CODE_EOF);
+    state=State::REGEX_CODE_EOF;
 }
-<<DEFAULT>>\p{Space}+\{\p{Space}*    {
+<<DEFAULT>>\u{Space}+\{\u{Space}*    {
     brace_level=0;
     current_default.clear();
-    start(REGEX_CODE_DEFAULT);
+    state=State::REGEX_CODE_DEFAULT;
 }
-<<BEFORE>>\p{Space}+\{\p{Space}*    {
+<<BEFORE>>\u{Space}+\{\u{Space}*    {
     brace_level=0;
     current_before.clear();
-    start(REGEX_CODE_BEFORE);
+    state=State::REGEX_CODE_BEFORE;
 }
-.    {str_temp.append(text(),size());}
+.    {str_temp.append(matched);}
 }
 
 
@@ -416,17 +412,17 @@ N    \r?\n
         yuki::trim_trailing_spaces(str_temp);
         yuki::trim_trailing_spaces(current_regex);
         current_regex_codes.emplace_back(std::move(current_regex),std::move(str_temp));
-        start(DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX);
+        state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
 }
-'    {str_temp.push_back('\''); state_prev=REGEX_CODE; start(C_LIT);}
-\"    {str_temp.push_back('\"'); state_prev=REGEX_CODE; start(S_LIT);}
-.|\n    {str_temp.append(text(),size());}
+'    {str_temp.push_back('\''); state_prev=State::REGEX_CODE; state=State::C_LIT;}
+"    {str_temp.push_back('\"'); state_prev=State::REGEX_CODE; state=State::S_LIT;}
+\u{All}    {str_temp.append(matched);}
 }
 
 
 <DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX>{
-.*{N}+    {start(POST_REGEX);}
+.*\R+    {state=State::POST_REGEX;}
 }
 
 
@@ -438,57 +434,57 @@ N    \r?\n
         current_eof.push_back('}');
     }else{
         yuki::trim_trailing_spaces(current_eof);
-        start(DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX);
+        state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
 }
-'    {current_eof.push_back('\''); start(C_LIT_EOF);}
-\"    {current_eof.push_back('\"'); start(S_LIT_EOF);}
-.|\n    {current_eof.append(text(),size());}
+'    {current_eof.push_back('\''); state=State::C_LIT_EOF;}
+"    {current_eof.push_back('\"'); state=State::S_LIT_EOF;}
+\u{All}    {current_eof.append(matched);}
 }
 
 
 <C_LIT_EOF>{
-\\.    {current_eof.append(text(),size());}
-'    {current_eof.push_back('\''); start(REGEX_CODE_EOF);}
-.|\n    {current_eof.append(text(),size());}
+\\.    {current_eof.append(matched);}
+'    {current_eof.push_back('\''); state=State::REGEX_CODE_EOF;}
+\u{All}    {current_eof.append(matched);}
 }
 
 
 <S_LIT_EOF>{
-\\.    {current_eof.append(text(),size());}
-\"    {current_eof.push_back('\"'); start(REGEX_CODE_EOF);}
-.|\n    {current_eof.append(text(),size());}
+\\.    {current_eof.append(matched);}
+"    {current_eof.push_back('\"'); state=State::REGEX_CODE_EOF;}
+\u{All}    {current_eof.append(matched);}
 }
 
 
 <REGEX_CODE_DEFAULT>{
 \{    {++brace_level;current_default.push_back('{');}
-\}    {
+\}   {
     if(brace_level!=0){
         --brace_level;
         current_default.push_back('}');
     }else{
         yuki::trim_trailing_spaces(current_default);
-        start(DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX);
+        state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
 }
-'    {current_default.push_back('\''); start(C_LIT_DEFAULT);}
-\"    {current_default.push_back('\"'); start(S_LIT_DEFAULT);}
-.|\n    {current_default.append(text(),size());}
+'    {current_default.push_back('\''); state=State::C_LIT_DEFAULT;}
+"    {current_default.push_back('\"'); state=State::S_LIT_DEFAULT;}
+\u{All}    {current_default.append(matched);}
 }
 
 
 <C_LIT_DEFAULT>{
-\\.    {current_default.append(text(),size());}
-'    {current_default.push_back('\''); start(REGEX_CODE_DEFAULT);}
-.|\n    {current_default.append(text(),size());}
+\\.    {current_default.append(matched);}
+'    {current_default.push_back('\''); state=State::REGEX_CODE_DEFAULT;}
+\u{All}    {current_default.append(matched);}
 }
 
 
 <S_LIT_DEFAULT>{
-\\.    {current_default.append(text(),size());}
-\"    {current_default.push_back('\"'); start(REGEX_CODE_DEFAULT);}
-.|\n    {current_default.append(text(),size());}
+\\.    {current_default.append(matched);}
+"    {current_default.push_back('\"'); state=State::REGEX_CODE_DEFAULT;}
+\u{All}    {current_default.append(matched);}
 }
 
 
@@ -500,39 +496,39 @@ N    \r?\n
         current_before.push_back('}');
     }else{
         yuki::trim_trailing_spaces(current_before);
-        start(DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX);
+        state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
 }
-'    {current_before.push_back('\''); start(C_LIT_BEFORE);}
-\"    {current_before.push_back('\"'); start(S_LIT_BEFORE);}
-.|\n    {current_before.append(text(),size());}
+'    {current_before.push_back('\''); state=State::C_LIT_BEFORE;}
+"    {current_before.push_back('\"'); state=State::S_LIT_BEFORE;}
+\u{All}    {current_before.append(matched);}
 }
 
 
 <C_LIT_BEFORE>{
-\\.    {current_before.append(text(),size());}
-'    {current_before.push_back('\''); start(REGEX_CODE_BEFORE);}
-.|\n    {current_before.append(text(),size());}
+\\.    {current_before.append(matched);}
+'    {current_before.push_back('\''); state=State::REGEX_CODE_BEFORE;}
+\u{All}    {current_before.append(matched);}
 }
 
 
 <S_LIT_BEFORE>{
-\\.    {current_before.append(text(),size());}
-\"    {current_before.push_back('\"'); start(REGEX_CODE_BEFORE);}
-.|\n    {current_before.append(text(),size());}
+\\.    {current_before.append(matched);}
+"    {current_before.push_back('\"'); state=State::REGEX_CODE_BEFORE;}
+\u{All}    {current_before.append(matched);}
 }
 
 
 <POST_REGEX>{
-\p{Space}*\}    {
+\u{Space}*\}    {
     if(rp.heads().size()>max_heads)
         max_heads = rp.heads().size();
     write_fsm_code_wrapped();
     named_regex_codes.emplace_back(std::move(current_fsm_name),std::move(current_regex_codes),std::move(current_eof),std::move(current_default),std::move(current_before));
-    start(SEC1);
+    state=State::SEC1;
 }
 
-\%\%\p{Space}*    {
+\%\%\u{Space}*    {
     fprintf(stderr,"Error: Missing closing brace for fsm \"%s\"!\n",current_fsm_name.c_str());
     ++errors_;
     if(rp.heads().size()>max_heads)
@@ -544,15 +540,19 @@ N    \r?\n
         ++errors_;
     }
     write_lex_and_h1();
-    start(SEC2);
+    state=State::SEC2;
 }
 
-<<DEFAULT>>    {start(REGEX);}
+<<DEFAULT>>    {state=State::REGEX;}
 }
 
 
 <SEC2>{
-(.|\n)+    {fprintf(cmd_data.fp_out_cpp,"%s",text()); return 0;}
+\u{All}+    {
+    for(const char c: matched)
+        fprintf(cmd_data.fp_out_cpp,"%c",c);
+    return 0;
+}
 }
 
 %%
@@ -658,10 +658,10 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
     #ifdef YUKI_LEX_META_DBG
     if(!cmd_data.debug_options.no_normal)
         yuki::lex::write_fsm_code(out_cpp,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
-    if(cmd_data.debug_options.force_policy_char){
-        fprintf(cmd_data.debug_options.force_policy_char,"%s\n",current_fsm_name.c_str());
-        yuki::lex::write_fsm_code(cmd_data.debug_options.force_policy_char,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{cmd_data.debug_options.force_policy_char,nullptr});
-        fprintf(cmd_data.debug_options.force_policy_char,"\n\n");
+    if(cmd_data.debug_options.policy_char){
+        fprintf(cmd_data.debug_options.policy_char,"%s\n",current_fsm_name.c_str());
+        yuki::lex::write_fsm_code(cmd_data.debug_options.policy_char,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{cmd_data.debug_options.policy_char,nullptr});
+        fprintf(cmd_data.debug_options.policy_char,"\n\n");
     }
     if(cmd_data.debug_options.simple_accumulate){
         fprintf(cmd_data.debug_options.simple_accumulate,"%s\n",current_fsm_name.c_str());

@@ -37,7 +37,7 @@
 
 %code h_top{
 #include<yuki/Vector.hpp>
-#include"regex_lexer.h"
+#include"gen/Regex_Lexer.h"
 #ifndef YUKI_LEX_FSM_FACTORY_POOL_BLOCK
 #define YUKI_LEX_FSM_FACTORY_POOL_BLOCK 256
 #endif
@@ -54,7 +54,7 @@
   private:
     FSM_Factory<Node_Pool<FSM_Node,YUKI_LEX_FSM_FACTORY_POOL_BLOCK>> ff;
     size_t branch=0;
-    unsigned* errors=nullptr;
+    unsigned& errors;
 
     yuki::Vector<FSM> fsms_{yuki::reserve_tag,YUKI_LEX_FSMS_RESERVE};
     size_t max_branch_size_ = 0;
@@ -70,8 +70,7 @@
         heads_.clear();
     }
 
-    Regex_Parser() noexcept = default;
-    explicit Regex_Parser(Regex_Lexer* const l,unsigned* const e) noexcept : lexer(l), errors(e) {}
+    explicit Regex_Parser(Regex_Lexer* const l,unsigned& e) noexcept : lexer(l), errors(e) {}
 
     size_t total_branches() const {return branch;}
     const FSM* fsms() const {return fsms_.begin();}
@@ -132,8 +131,7 @@ Regex:
         {
             if(!heads_.empty() && heads_.back()==branch){
                 fprintf(stderr,"Error: Multiple lookaheads in branch %zu!\n",branch);
-                assert(errors);
-                ++*errors;
+                ++errors;
             }else
                 heads_.emplace_back(branch);
         }

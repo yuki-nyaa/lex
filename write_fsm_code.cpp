@@ -1107,14 +1107,14 @@ accumulate_ret_t accumulate_simple(const FSM_Edge_View* const edge_views,const u
 
 
 /*
-Definition: Let `a` and `b` be 2 unsigned number. I say `a` is recursively less than or equivalent to `b` (abbr. `a` rle `b`), iff. `a` <= `b`, and their stems (i.e. the number produced by removing the least significant "1", if any), stems of stems, stems of stems of stems, etc. also satisfy the <= relation. In a same way I can define the rge relation.
+Definition: Let `a` and `b` be 2 unsigned number. I say `a` is recursively less than or equivalent to `b` (abbr. `a` rle `b`), iff. `a` <= `b`, and their stems (i.e. the number produced by removing the least significant "1", if any), stems of stems, stems of stems of stems, etc. also satisfy the <= relation. In the same way I can define the rge relation.
 
 Within each tier of either intersectionss or unionss, `edge_indices`s of consecutive entries satisfy the rge relation.
 
 RLE(RGE) Theorem: For numbers with the same count of "1"s, rle is equivalent to <=. Similarly rge is equivalent to >=.
 Proof: (One direction is trivially true, by definition.)
-First note that this propsition is inductive. That is, since the 2 numbers have the same count of "1"s, their stems must also have the same count of "1"s. So there is only need to prove a single iteration. That is, `a`<=`b` implies `stem(a)`<=`stem(b)`.
-Now first we can remove the common prefix of both numbers. If the remainder is nothing then the 2 numbers are exactly the same, in which case the propsition holds trivially. Now suppose we are left with 2 non-empty numbers, then the msb of the smaller one must be "0" and the msb of the greater one must be "1", for otherwise we would either have a longer common prefix or violate the <= relation. Now remove the least significant "1" to compute the stem. If the msb of the greater one does not get removed then result is obvious. Now suppose the msb of the greater one gets removed. Since that "1" is the MOST significant "1", the greater number before removal must contain only a single "1". Now because the 2 numbers have the same count of "1"s, the smaller number before removal should also have only a single "1". So after removal both number would equal 0, thus proving the theorem.
+First note that this proposition is inductive. That is, since the 2 numbers have the same count of "1"s, their stems must also have the same count of "1"s. So there is only need to prove a single iteration. That is, `a`<=`b` implies `stem(a)`<=`stem(b)`.
+Now first we can remove the common prefix of both numbers. If the remainder is nothing then the 2 numbers are exactly the same, in which case the propsition holds trivially. Now suppose we are left with 2 non-empty numbers, then the msb of the bigger one must be "1" and the same bit of the smaller one must be "0", for otherwise we would either have a longer common prefix or violate the <= relation. Now remove the least significant "1" to compute the stem. If the said bit of the greater one does not get removed then result is obvious. Now suppose the said bit of the greater one does get removed. Since that "1" is the MOST significant "1", the greater number before removal must contain only a single "1". Now because the 2 numbers have the same count of "1"s, the smaller number before removal should also have only a single "1". So after removal both number would equal 0, thus proving the theorem.
 */
 
 
@@ -2252,7 +2252,7 @@ void write_fsm_code(
             #endif
             default:{
                 #ifdef YUKI_LEX_META_DBG
-                if(edge_views.size()==3 && !debug_options.force_policy_char){
+                if(edge_views.size()==3 && !debug_options.policy_char){
                     policy_edge_3(fsms_size);
                     edge_views.clear();
                     edge_views_branch_indices.clear();
@@ -2280,7 +2280,7 @@ void write_fsm_code(
                 #else
                 const size_t total_chars = cc_union.char_count();
                 YUKI_LEX_META_DBGO("S{} edges {} chars {}\n",worklist.front()->mapped,edge_views.size(),total_chars);
-                if(debug_options.force_policy_char || total_chars<=YUKI_LEX_POLICY_CHAR_MAX_CHAR_COUNT || edge_views.size()>64 || !policy_edge(fsms_size,debug_options.simple_accumulate))
+                if(debug_options.policy_char || total_chars<=YUKI_LEX_POLICY_CHAR_MAX_CHAR_COUNT || edge_views.size()>64 || !policy_edge(fsms_size,debug_options.simple_accumulate))
                 #endif
                     policy_char(fsms_size);
 

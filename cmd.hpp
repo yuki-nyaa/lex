@@ -17,7 +17,7 @@ struct Cmd_Data{
 
     #ifdef YUKI_LEX_META_DBG
     struct Debug_Options{
-        FILE* force_policy_char = nullptr;
+        FILE* policy_char = nullptr;
         FILE* simple_accumulate = nullptr;
         bool no_normal = false;
         FILE* text = nullptr;
@@ -29,7 +29,7 @@ struct Cmd_Data{
         if(fp_out_cpp!=nullptr && fp_out_cpp!=stdout && fp_out_cpp!=stderr) {fclose(fp_out_cpp);fp_out_cpp=nullptr;}
         if(fp_out_h!=nullptr && fp_out_h!=stdout && fp_out_h!=stderr) {fclose(fp_out_h);fp_out_h=nullptr;}
         #ifdef YUKI_LEX_META_DBG
-        if(debug_options.force_policy_char!=nullptr) {fclose(debug_options.force_policy_char);debug_options.force_policy_char=nullptr;}
+        if(debug_options.policy_char!=nullptr) {fclose(debug_options.policy_char);debug_options.policy_char=nullptr;}
         if(debug_options.simple_accumulate!=nullptr) {fclose(debug_options.simple_accumulate);debug_options.simple_accumulate=nullptr;}
         if(debug_options.text!=nullptr) {fclose(debug_options.text);debug_options.text=nullptr;}
         #endif
@@ -53,8 +53,8 @@ namespace cmd_impl{
         exit(EXIT_SUCCESS);
     }
     #ifdef YUKI_LEX_META_DBG
-    inline void fpc(Cmd_Data& cmd_data,yuki::Vector<std::string>&){
-        cmd_data.debug_options.force_policy_char = fopen("out_char.txt","w");
+    inline void pc(Cmd_Data& cmd_data,yuki::Vector<std::string>&){
+        cmd_data.debug_options.policy_char = fopen("out_char.txt","w");
     }
     inline void sa(Cmd_Data& cmd_data,yuki::Vector<std::string>&){
         cmd_data.debug_options.simple_accumulate = fopen("out_sa.txt","w");
@@ -76,7 +76,7 @@ inline yuki::cmd_opt_table_t<Cmd_Data> opt_table={ // Option property table
     {"o",{yuki::Cmd_Token::Sa,1,1, &cmd_impl::o}},
     {"h",{yuki::Cmd_Token::Sa,1,1, &cmd_impl::h}},
     #ifdef YUKI_LEX_META_DBG
-    {"fpc",{yuki::Cmd_Token::L, 0, 0, &cmd_impl::fpc}},
+    {"pc",{yuki::Cmd_Token::L, 0, 0, &cmd_impl::pc}},
     {"sa",{yuki::Cmd_Token::L, 0, 0, &cmd_impl::sa}},
     {"nn",{yuki::Cmd_Token::L, 0, 0, &cmd_impl::nn}},
     {"text",{yuki::Cmd_Token::L, 0, 0, &cmd_impl::text}},
@@ -86,13 +86,12 @@ inline yuki::cmd_opt_table_t<Cmd_Data> opt_table={ // Option property table
 inline bool Cmd_Data::post_process(){
     // Check for empty input.
     if(in.empty()){
-        yuki::print_error(stderr,"no input is specified.\n");
-        yuki::print_note(stderr,"use \'-i\' to specify input file.\n");
+        fprintf(stderr,"Error: No input is specified! (Note: use \"-i\" to specify input file.)\n");
         return false;
     }
     fp_in=fopen(in.c_str(),"r");
     if(!fp_in){
-        yuki::print_error(stderr,"the input file \'{}\' cannot be opened!\n",in);
+        fprintf(stderr,"Error: The input file \"%s\" somehow cannot be opened!\n",in.c_str());
         return false;
     }
 
@@ -100,7 +99,7 @@ inline bool Cmd_Data::post_process(){
     const auto [input_no_ext,input_ext] = yuki::vsplit_filename(in);
 
     if(input_ext=="cpp" || input_ext=="h" || input_ext=="hpp"){
-        yuki::print_error(stderr,"input file has extension \'cpp\', \'h\', or \'hpp\', which might collide with the output files.\n");
+        fprintf(stderr,"Error: The input file has extension \"cpp\", \"h\", or \"hpp\", which might collide with the output files!\n");
         return false;
     }
 
@@ -112,6 +111,10 @@ inline bool Cmd_Data::post_process(){
         out_cpp.append(".cpp");
     }
     fp_out_cpp=fopen(out_cpp.c_str(),"w");
+    if(!fp_out_cpp){
+        fprintf(stderr,"Error: The out file \"%s\" somehow cannot be created!\n",out_cpp.c_str());
+        return false;
+    }
     // The default h-out filename is the same as the CPP-OUT file.
     const std::string_view out_cpp_no_ext=yuki::vsplit_filename(out_cpp).zeroth;
     if(out_h.empty()){
@@ -120,6 +123,10 @@ inline bool Cmd_Data::post_process(){
         out_h.append(".h");
     }
     fp_out_h=fopen(out_h.c_str(),"w");
+    if(!fp_out_h){
+        fprintf(stderr,"Error: The out header \"%s\" somehow cannot be created!\n",out_h.c_str());
+        return false;
+    }
 
     return true;
 } // bool Cmd_Data::post_process()
