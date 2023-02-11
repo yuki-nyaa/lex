@@ -350,10 +350,22 @@ struct fmt::formatter<yuki::lex::Wrapped_C32,char> : yuki::simple_formatter<yuki
                         return fmt::format_to(ctx.out(),"0x{:X}_u8",static_cast<unsigned>(wc32.c32));
                 }
             }
+        }else{
+            switch(wc32.c32){
+                case 0x2028: return fmt::format_to(ctx.out(),"0x2028_u8/*LS*/");
+                case 0x2029: return fmt::format_to(ctx.out(),"0x2029_u8/*PS*/");
+                case 0x202A: return fmt::format_to(ctx.out(),"0x202A_u8/*LRE*/");
+                case 0x202B: return fmt::format_to(ctx.out(),"0x202B_u8/*RLE*/");
+                case 0x202C: return fmt::format_to(ctx.out(),"0x202C_u8/*PDF*/");
+                case 0x202D: return fmt::format_to(ctx.out(),"0x202D_u8/*LRO*/");
+                case 0x202E: return fmt::format_to(ctx.out(),"0x202E_u8/*RLO*/");
+                default:{
+                    char buf[5] = {};
+                    yuki::U8Char(wc32.c32).write_to(buf);
+                    return fmt::format_to(ctx.out(),"0x{:X}_u8/*{}*/",static_cast<uint_least32_t>(wc32.c32),buf);
+                }
+            }
         }
-        char buf[5] = {};
-        yuki::U8Char(wc32.c32).write_to(buf);
-        return fmt::format_to(ctx.out(),"0x{:X}_u8/*{}*/",static_cast<uint_least32_t>(wc32.c32),buf);
     }
 };
 
@@ -413,7 +425,14 @@ struct Transition_Table{
             switch(ci.ub-ci.lb){
                 case 0 : fmt::print(out,"(c=={})",Wrapped_C32{ci.lb});break;
                 case 1 : fmt::print(out,"(c=={} || c=={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
-                default: fmt::print(out,"(c>={} && c<={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
+                default:{
+                    if(ci.lb==0)
+                        fmt::print(out,"(");
+                    else
+                        fmt::print(out,"(c>={} && ",Wrapped_C32{ci.lb});
+                    fmt::print(out,"c<={})",Wrapped_C32{ci.ub});
+                    break;
+                }
             }
             ++i;
             }
@@ -423,7 +442,14 @@ struct Transition_Table{
                 switch(ci.ub-ci.lb){
                     case 0 : fmt::print(out,"(c=={})",Wrapped_C32{ci.lb});break;
                     case 1 : fmt::print(out,"(c=={} || c=={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
-                    default: fmt::print(out,"(c>={} && c<={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
+                    default:{
+                        if(ci.lb==0)
+                            fmt::print(out,"(");
+                        else
+                            fmt::print(out,"(c>={} && ",Wrapped_C32{ci.lb});
+                        fmt::print(out,"c<={})",Wrapped_C32{ci.ub});
+                        break;
+                    }
                 }
             }
             fmt::print(out,")");

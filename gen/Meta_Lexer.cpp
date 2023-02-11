@@ -22,7 +22,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -41,7 +41,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -78,7 +78,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S15;
@@ -115,7 +115,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S13:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S25;
     if((c=='\n'_u8)
@@ -138,7 +138,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S15;
@@ -182,7 +182,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S25:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S25;
     if((c=='\n'_u8)
@@ -237,7 +237,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S45;
@@ -283,7 +283,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S45;
@@ -311,7 +311,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S57;
@@ -355,7 +355,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S57;
@@ -444,7 +444,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S85;
@@ -477,7 +477,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S92;
@@ -498,7 +498,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S85;
@@ -507,7 +507,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
   S86:
     cap=9; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S95;
     in.set_pos(pos_take); return cap;
@@ -541,7 +541,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S92;
@@ -560,7 +560,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S102;
@@ -568,7 +568,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
   S95:
     cap=9; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S95;
     in.set_pos(pos_take); return cap;
@@ -593,7 +593,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S106;
@@ -615,7 +615,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S102;
@@ -633,7 +633,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S110;
@@ -651,7 +651,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S106;
@@ -665,7 +665,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S112;
@@ -687,7 +687,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S110;
@@ -705,7 +705,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S112;
@@ -743,7 +743,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S122;
@@ -757,7 +757,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S123;
@@ -775,7 +775,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S122;
@@ -789,7 +789,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S123;
@@ -811,7 +811,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S127;
@@ -825,7 +825,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S127;
@@ -844,14 +844,14 @@ size_t Meta_Lexer_fsm_codes::O_NSPACE(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -869,14 +869,14 @@ size_t Meta_Lexer_fsm_codes::O_LEXER(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -894,14 +894,14 @@ size_t Meta_Lexer_fsm_codes::O_ICLASS(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -919,14 +919,14 @@ size_t Meta_Lexer_fsm_codes::O_IHEADER(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -944,14 +944,14 @@ size_t Meta_Lexer_fsm_codes::O_DPREFIX(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -969,14 +969,14 @@ size_t Meta_Lexer_fsm_codes::O_FCNSPACE(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -994,14 +994,14 @@ size_t Meta_Lexer_fsm_codes::O_TTYPE(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -1019,14 +1019,14 @@ size_t Meta_Lexer_fsm_codes::O_TPLEXER(I& in,typename I::Pos* const heads){
   S0:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
@@ -1049,7 +1049,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(I& in,typename I::Pos* const
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1063,7 +1063,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(I& in,typename I::Pos* const
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1083,7 +1083,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads){
   S0:
     pos_head=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\n'_u8)
@@ -1095,7 +1095,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads){
   S1:
     pos_head=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\n'_u8)
@@ -1126,11 +1126,11 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
-    if((c>=0x0_u8 && c<='\b'_u8)
+    if((c<='\b'_u8)
     || (c>=0xE_u8 && c<=0x1F_u8)
     || (c>='!'_u8 && c<='.'_u8)
     || (c>='0'_u8 && c<='z'_u8)
@@ -1139,7 +1139,7 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
     || (c>=0xA1_u8/*¡*/ && c<=0x167F_u8/*ᙿ*/)
     || (c>=0x1681_u8/*ᚁ*/ && c<=0x1FFF_u8/*῿*/)
     || (c>=0x200B_u8/*​*/ && c<=0x2027_u8/*‧*/)
-    || (c>=0x202A_u8/*‪*/ && c<=0x202E_u8/*‮*/)
+    || (c>=0x202A_u8/*LRE*/ && c<=0x202E_u8/*RLO*/)
     || (c>=0x2030_u8/*‰*/ && c<=0x205E_u8/*⁞*/)
     || (c>=0x2060_u8/*⁠*/ && c<=0x2FFF_u8/*⿿*/)
     || (c>=0x3001_u8/*、*/ && c<=0x10FFFF_u8/*􏿿*/)) goto S2;
@@ -1155,7 +1155,7 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1173,7 +1173,7 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S5:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S6;
     if((c=='\n'_u8)
@@ -1181,7 +1181,7 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S6:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S6;
     if((c=='\n'_u8)
@@ -1203,7 +1203,7 @@ size_t Meta_Lexer_fsm_codes::CODE1(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='&'_u8)
     || (c>='('_u8 && c<='z'_u8)
     || (c=='|'_u8)
@@ -1241,7 +1241,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='&'_u8)
+    if((c<='&'_u8)
     || (c>='('_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -1253,7 +1253,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -1276,7 +1276,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -1288,7 +1288,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -1317,7 +1317,7 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1334,7 +1334,7 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1349,7 +1349,7 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S4:
     c=in.get();
-    if((c>=0x0_u8 && c<='='_u8)
+    if((c<='='_u8)
     || (c>='?'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S7;
     if((c=='>'_u8)) goto S8;
     in.set_pos(pos_take); return cap;
@@ -1362,14 +1362,14 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S9;
     in.set_pos(pos_take); return cap;
   S6:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S10;
     if((c=='\n'_u8)
@@ -1377,7 +1377,7 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S7:
     c=in.get();
-    if((c>=0x0_u8 && c<='='_u8)
+    if((c<='='_u8)
     || (c>='?'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S7;
     if((c=='>'_u8)) goto S8;
     in.set_pos(pos_take); return cap;
@@ -1394,14 +1394,14 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S9;
     in.set_pos(pos_take); return cap;
   S10:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S10;
     if((c=='\n'_u8)
@@ -1450,7 +1450,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     c=in.get();
     if((c=='\n'_u8)
     || (c=='\r'_u8)) goto S1;
-    if((c>=0x0_u8 && c<='\b'_u8)
+    if((c<='\b'_u8)
     || (c>=0xE_u8 && c<=0x1F_u8)
     || (c>='!'_u8 && c<=';'_u8)
     || (c>='='_u8 && c<=0x84_u8/**/)
@@ -1458,7 +1458,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c>=0xA1_u8/*¡*/ && c<=0x167F_u8/*ᙿ*/)
     || (c>=0x1681_u8/*ᚁ*/ && c<=0x1FFF_u8/*῿*/)
     || (c>=0x200B_u8/*​*/ && c<=0x2027_u8/*‧*/)
-    || (c>=0x202A_u8/*‪*/ && c<=0x202E_u8/*‮*/)
+    || (c>=0x202A_u8/*LRE*/ && c<=0x202E_u8/*RLO*/)
     || (c>=0x2030_u8/*‰*/ && c<=0x205E_u8/*⁞*/)
     || (c>=0x2060_u8/*⁠*/ && c<=0x2FFF_u8/*⿿*/)
     || (c>=0x3001_u8/*、*/ && c<=0x10FFFF_u8/*􏿿*/)) goto S2;
@@ -1469,7 +1469,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S3;
@@ -1483,7 +1483,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1501,7 +1501,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -1521,7 +1521,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S7;
@@ -1541,7 +1541,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S7;
@@ -1602,7 +1602,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S23;
@@ -1623,7 +1623,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S23;
@@ -1646,7 +1646,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S29;
@@ -1668,7 +1668,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S29;
@@ -1685,7 +1685,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S33;
@@ -1698,7 +1698,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S34;
@@ -1711,7 +1711,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S33;
@@ -1725,7 +1725,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S34;
@@ -1740,7 +1740,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S37;
@@ -1754,7 +1754,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S38;
@@ -1768,7 +1768,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S37;
@@ -1782,7 +1782,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S38;
@@ -1800,7 +1800,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='&'_u8)
     || (c>='('_u8 && c<='z'_u8)
     || (c=='|'_u8)
@@ -1838,7 +1838,7 @@ size_t Meta_Lexer_fsm_codes::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I& i
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\n'_u8)
@@ -1846,7 +1846,7 @@ size_t Meta_Lexer_fsm_codes::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I& i
     in.set_pos(pos_take); return cap;
   S1:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\n'_u8)
@@ -1871,7 +1871,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_EOF(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='&'_u8)
     || (c>='('_u8 && c<='z'_u8)
     || (c=='|'_u8)
@@ -1909,7 +1909,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_EOF(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='&'_u8)
+    if((c<='&'_u8)
     || (c>='('_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -1921,7 +1921,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_EOF(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -1944,7 +1944,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_EOF(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -1956,7 +1956,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_EOF(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -1979,7 +1979,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_DEFAULT(I& in,typename I::Pos* const hea
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='&'_u8)
     || (c>='('_u8 && c<='z'_u8)
     || (c=='|'_u8)
@@ -2017,7 +2017,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_DEFAULT(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='&'_u8)
+    if((c<='&'_u8)
     || (c>='('_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -2029,7 +2029,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_DEFAULT(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -2052,7 +2052,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_DEFAULT(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -2064,7 +2064,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_DEFAULT(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -2087,7 +2087,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_BEFORE(I& in,typename I::Pos* const head
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='&'_u8)
     || (c>='('_u8 && c<='z'_u8)
     || (c=='|'_u8)
@@ -2125,7 +2125,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_BEFORE(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='&'_u8)
+    if((c<='&'_u8)
     || (c>='('_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -2137,7 +2137,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_BEFORE(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -2160,7 +2160,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_BEFORE(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='!'_u8)
+    if((c<='!'_u8)
     || (c>='#'_u8 && c<='['_u8)
     || (c>=']'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     if((c=='\\'_u8)) goto S2;
@@ -2172,7 +2172,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_BEFORE(I& in,typename I::Pos* const heads){
   S2:
     cap=3; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S4;
     in.set_pos(pos_take); return cap;
@@ -2201,7 +2201,7 @@ size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -2216,7 +2216,7 @@ size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S1;
@@ -2238,7 +2238,7 @@ size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S5;
@@ -2252,7 +2252,7 @@ size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
     || (c==0xA0_u8/* */)
     || (c==0x1680_u8/* */)
     || (c>=0x2000_u8/* */ && c<=0x200A_u8/* */)
-    || (c==0x2028_u8/* */ || c==0x2029_u8/* */)
+    || (c==0x2028_u8/*LS*/ || c==0x2029_u8/*PS*/)
     || (c==0x202F_u8/* */)
     || (c==0x205F_u8/* */)
     || (c==0x3000_u8/*　*/)) goto S5;
@@ -2270,12 +2270,12 @@ size_t Meta_Lexer_fsm_codes::SEC2(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
+    if((c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
   S1:
     cap=1; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
+    if((c<=0x10FFFF_u8/*􏿿*/)) goto S1;
     in.set_pos(pos_take); return cap;
 } // Meta_Lexer_fsm_codes::SEC2
 

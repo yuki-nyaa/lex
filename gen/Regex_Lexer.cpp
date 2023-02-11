@@ -19,7 +19,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     (void)heads;
   S0:
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<='#'_u8)
     || (c>='%'_u8 && c<='\''_u8)
@@ -80,7 +80,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
   S11:
     cap=55; pos_take=in.get_pos();
     c=in.get();
-    if((c>=0x0_u8 && c<='\t'_u8)
+    if((c<='\t'_u8)
     || (c=='\v'_u8 || c=='\f'_u8)
     || (c>=0xE_u8 && c<='@'_u8)
     || (c>='C'_u8 && c<='M'_u8)
@@ -241,13 +241,13 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S43:
     c=in.get();
-    if((c>=0x0_u8 && c<='|'_u8)
+    if((c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
     in.set_pos(pos_take); return cap;
   S44:
     c=in.get();
-    if((c>=0x0_u8 && c<='@'_u8)
+    if((c<='@'_u8)
     || (c=='E'_u8 || c=='F'_u8)
     || (c>='H'_u8 && c<='K'_u8)
     || (c>='M'_u8 && c<='O'_u8)
@@ -270,7 +270,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S45:
     c=in.get();
-    if((c>=0x0_u8 && c<='@'_u8)
+    if((c<='@'_u8)
     || (c>='B'_u8 && c<='R'_u8)
     || (c>='T'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
@@ -285,7 +285,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S47:
     c=in.get();
-    if((c>=0x0_u8 && c<='|'_u8)
+    if((c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
     in.set_pos(pos_take); return cap;
@@ -358,7 +358,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S61:
     c=in.get();
-    if((c>=0x0_u8 && c<='k'_u8)
+    if((c<='k'_u8)
     || (c>='m'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -366,7 +366,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S62:
     c=in.get();
-    if((c>=0x0_u8 && c<='o'_u8)
+    if((c<='o'_u8)
     || (c>='q'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -450,7 +450,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S82:
     c=in.get();
-    if((c>=0x0_u8 && c<='k'_u8)
+    if((c<='k'_u8)
     || (c>='m'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -458,7 +458,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S83:
     c=in.get();
-    if((c>=0x0_u8 && c<='`'_u8)
+    if((c<='`'_u8)
     || (c>='b'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -537,13 +537,13 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S102:
     c=in.get();
-    if((c>=0x0_u8 && c<='|'_u8)
+    if((c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S121;
     in.set_pos(pos_take); return cap;
   S103:
     c=in.get();
-    if((c>=0x0_u8 && c<='b'_u8)
+    if((c<='b'_u8)
     || (c>='d'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -621,7 +621,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S122:
     c=in.get();
-    if((c>=0x0_u8 && c<='d'_u8)
+    if((c<='d'_u8)
     || (c>='f'_u8 && c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S48;
@@ -690,7 +690,7 @@ size_t Regex_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     in.set_pos(pos_take); return cap;
   S139:
     c=in.get();
-    if((c>=0x0_u8 && c<='|'_u8)
+    if((c<='|'_u8)
     || (c>='~'_u8 && c<=0x10FFFF_u8/*􏿿*/)) goto S47;
     if((c=='}'_u8)) goto S153;
     in.set_pos(pos_take); return cap;
