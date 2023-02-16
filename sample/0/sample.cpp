@@ -14,7 +14,7 @@ size_t Blah_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
     const typename I::Pos pos_begin=in.get_pos();
     typename I::Pos pos_take=in.get_pos();
     typename I::Pos pos_head=in.get_pos();
-    static constexpr size_t HEAD_MAP[3]={00,0,1};
+    static constexpr size_t HEAD_MAP[3]={0,0,1,};
   S0:
     c=in.get();
     if((c=='a'_u8)) goto S1;
@@ -73,7 +73,7 @@ size_t Blah_fsm_codes::STATE1(I& in,typename I::Pos* const heads){
     const typename I::Pos pos_begin=in.get_pos();
     typename I::Pos pos_take=in.get_pos();
     typename I::Pos pos_head=in.get_pos();
-    static constexpr size_t HEAD_MAP[3]={00,0,1};
+    static constexpr size_t HEAD_MAP[3]={0,0,1,};
   S0:
     c=in.get();
     if((c=='a'_u8)) goto S1;
@@ -122,6 +122,34 @@ size_t Blah_fsm_codes::STATE1(I& in,typename I::Pos* const heads){
     cap=3; pos_take=heads[HEAD_MAP[2]];
     in.set_pos(pos_take); return cap;
 } // Blah_fsm_codes::STATE1
+
+
+template<typename I>
+size_t Blah_fsm_codes::STATE2(I& in,typename I::Pos* const heads){
+    using namespace yuki::literals;
+    decltype(in.get()) c;
+    size_t cap=0;
+    const typename I::Pos pos_begin=in.get_pos();
+    typename I::Pos pos_take=in.get_pos();
+    (void)heads;
+  S0:
+    c=in.get();
+    if((c<=' '_u8)
+    || (c>=0x7F_u8 && c<=0x1233_u8/*ሳ*/)
+    || (c>=0x1235_u8/*ስ*/ && c<=0x10FFFF_u8/*􏿿*/)) goto S1;
+    if((c>='!'_u8 && c<='~'_u8)) goto S2;
+    if((c==0x1234_u8/*ሴ*/)) goto S3;
+    in.set_pos(pos_take); return cap;
+  S1:
+    cap=3; pos_take=in.get_pos();
+    in.set_pos(pos_take); return cap;
+  S2:
+    cap=1; pos_take=in.get_pos();
+    in.set_pos(pos_take); return cap;
+  S3:
+    cap=2; pos_take=in.get_pos();
+    in.set_pos(pos_take); return cap;
+} // Blah_fsm_codes::STATE2
 
 
 template<typename T,int i>
@@ -238,6 +266,61 @@ case State::STATE1:{
     } // switch(Blah_fsm_codes::STATE1(in,heads))
     break;
 } // case State::STATE1
+case State::STATE2:{
+    clear_heads();
+            {
+
+    u_count_prev=in.u_count;
+            }
+    switch(Blah_fsm_codes::STATE2(in,heads)){
+    case 0:{
+        if(!in.getable()){
+            YUKI_LEX_Blah_DBGO("State=STATE2 EOF\n");
+            {
+
+    // EOFg
+    return 100;
+            }
+        }else{ // if(!in.getable())
+            YUKI_LEX_Blah_DBGO("State=STATE2 DEFAULT\n");
+            {
+
+    // DEFAULTg
+    return 200;
+            }
+        } // if(!in.getable()) else
+        break;
+    } // case 0
+    case 1:{ // \p{Graph}
+        matched=in.matched(pos_begin);
+        YUKI_LEX_Blah_DBGO("State=STATE2 cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Blah_DBG_REGEX_MAX_PRINT),matched.size());
+        {
+/*8*/
+        }
+        in.clear_matched();
+        break;
+    } // case 1 // \p{Graph}
+    case 2:{ // \u1234
+        matched=in.matched(pos_begin);
+        YUKI_LEX_Blah_DBGO("State=STATE2 cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Blah_DBG_REGEX_MAX_PRINT),matched.size());
+        {
+/*6*/
+        }
+        in.clear_matched();
+        break;
+    } // case 2 // \u1234
+    case 3:{ // \u{All}
+        matched=in.matched(pos_begin);
+        YUKI_LEX_Blah_DBGO("State=STATE2 cap=3 matched={} len={}\n",matched.substr(0,YUKI_LEX_Blah_DBG_REGEX_MAX_PRINT),matched.size());
+        {
+/*7*/
+        }
+        in.clear_matched();
+        break;
+    } // case 3 // \u{All}
+    } // switch(Blah_fsm_codes::STATE2(in,heads))
+    break;
+} // case State::STATE2
 } // switch(state)
 } // while(1)
 } // size_t Blah::lex()

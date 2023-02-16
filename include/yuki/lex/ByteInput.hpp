@@ -62,6 +62,7 @@ struct ByteInput_Base : protected BufferedInput_Base{
     void continue_source(FILE* const f) {assert(needs_buffer());Input::set_source(f);}
     void continue_source(const char* const s) {assert(needs_buffer());force_buffering=true;Input::set_source(s);}
     void continue_source(const char* const s,const size_t sz) {assert(needs_buffer());force_buffering=true;Input::set_source(s,sz);}
+    void continue_source(const std::string_view sv) {assert(needs_buffer());force_buffering=true;Input::set_source(sv);}
 
     bool getable() const {return pp_br<e_br || Input::getable();}
 
@@ -240,6 +241,7 @@ struct ByteInput_Base_With_Pos : protected ByteInput_Base, protected Ps{
     void set_source(FILE* const f) {discard_buffer();Input::set_source(f);Ps::reset_poss();}
     void set_source(const char* const s,const bool fb=false) {discard_buffer();Input::set_source(s);Ps::reset_poss();force_buffering=fb;}
     void set_source(const char* const s,const size_t sz,const bool fb=false) {discard_buffer();Input::set_source(s,sz);Ps::reset_poss();force_buffering=fb;}
+    void set_source(const std::string_view sv,const bool fb=false) {set_source(sv.data(),sv.size(),fb);}
 }; // struct ByteInput_Base_With_Pos
 
 

@@ -166,7 +166,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
                 unsigned char buf[4];
                 const size_t peeked = Input::peek(buf,u8l);
                 assert(peeked==u8l);
-                return  yuki::U8Char(buf);
+                return yuki::U8Char(buf);
             }
         }
 

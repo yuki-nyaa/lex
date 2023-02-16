@@ -10,7 +10,7 @@
 #include<string>
 #include<yuki/Vector.hpp>
 #include"cmd.hpp"
-#include"gen/Regex_Lexer.h"
+#include"Regex_Lexer.hpp"
 #include"gen/Regex_Parser.h"
 
 namespace yuki::lex{
@@ -75,9 +75,6 @@ void write_fsm_code(
     bool no_default_ctor = false;
     decltype(State::INITIAL) state_prev;
 
-    std::unordered_map<std::string,std::string> macro_table;
-    yuki::Vector<std::string_view> macro_stack;
-
     Regex_Lexer rl{errors_};
     Regex_Parser rp{&rl,errors_};
 
@@ -86,106 +83,6 @@ void write_fsm_code(
     void write_h0() const;
     void write_fsm_code_wrapped();
     void write_lex_and_h1();
-
-    void process_macro(std::string_view current,std::string& to_populate){
-        #ifndef YUKI_LEX_MAX_MACRO_EXPANSION
-        #define YUKI_LEX_MAX_MACRO_EXPANSION 128
-        #endif
-        size_t expansion = 0;
-
-        while(1){
-            std::string_view::const_iterator b = current.begin();
-            const std::string_view::const_iterator e = current.end();
-            while(b!=e){
-                switch(*b){
-                    case '\\':{
-                        ++b;
-                        if(b!=e){
-                            switch(*b){
-                                case 'p':
-                                case 'u':{
-                                    ++b;
-                                    if(b!=e)
-                                        ++b;
-                                    goto next_char;
-                                }
-                                default: ++b;goto next_char;
-                            }
-                        }else{
-                            fprintf(stderr,"Error: Incomplete escape character at the end!\n");
-                            ++errors_;
-                            to_populate.append(current.begin(),b).push_back('\\');
-                            if(!macro_stack.empty()){
-                                current=macro_stack.pop_back_v();
-                                goto big_loop_end;
-                            }else
-                                return;
-                        }
-                    }
-                    case '{':{
-                        ++b;
-                        if(b!=e){
-                            if(isdigit(static_cast<unsigned char>(*b))){
-                                ++b;
-                                goto next_char;
-                            }else{
-                                if(expansion<YUKI_LEX_MAX_MACRO_EXPANSION){
-                                    const std::string_view::const_iterator macro_b = b;
-                                    do{
-                                        if(*b=='}'){
-                                            try{
-                                                const std::string_view::const_iterator b_orig = current.begin();
-                                                current = macro_table.at(std::string(macro_b,b));
-                                                to_populate.append(b_orig,macro_b-1);
-                                                if(b!=e-1)
-                                                    macro_stack.emplace_back(b+1,e);
-                                                ++expansion;
-                                                goto big_loop_end;
-                                            }catch(const std::out_of_range&){
-                                                fprintf(stderr,"Error: Undefined macro name \"");
-                                                for(std::string_view::const_iterator i=macro_b;i!=b;++i)
-                                                    fprintf(stderr,"%c",*i);
-                                                fprintf(stderr,"\"!\n");
-                                                ++errors_;
-                                                ++b;
-                                                goto next_char;
-                                            }
-                                        }
-                                        else
-                                            ++b;
-                                    }while(b!=e);
-                                    // When `b` hits end with no '}' encountered.
-                                    fprintf(stderr,"Error: Incomplete macro name \"");
-                                    for(std::string_view::const_iterator i=macro_b;i!=e;++i)
-                                        fprintf(stderr,"%c",*i);
-                                    fprintf(stderr,"\"!\n");
-                                    goto next_stack;
-                                }else{
-                                    fprintf(stderr,"Error: Macro expansion hits limit %d!\n",YUKI_LEX_MAX_MACRO_EXPANSION);
-                                    ++errors_;
-                                    ++b;
-                                    goto next_char;
-                                }
-                            } // if(isdigit(static_cast<unsigned char>(*b))) else
-                        }else{ // if(b!=e)
-                            fprintf(stderr,"Error: Stray { encountered!\n");
-                            ++errors_;
-                            goto next_stack;
-                        }
-                    } // case '{'
-                    default: ++b; goto next_char;
-                } // switch(*b)
-                next_char:;
-            } // while(b!=e)
-            next_stack:
-            to_populate.append(current.begin(),b);
-            if(!macro_stack.empty())
-                current=macro_stack.pop_back_v();
-            else
-                return;
-            big_loop_end:;
-        } // while(1)
-    } // process_macro
   public:
     auto errors() const {return errors_;}
 
@@ -281,7 +178,7 @@ void write_fsm_code(
 .*(?=\R)    {
     str_temp.assign("(");
     str_temp.append(matched).push_back(')');
-    const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
+    const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = rl.macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
     if(!emplace_ret.second){
         fprintf(stderr,"Error: Multiple definition of macro \"%s\"!\n",emplace_ret.first->first.c_str());
         ++errors_;
@@ -371,15 +268,13 @@ void write_fsm_code(
 
 <REGEX>{
 \u{Space}+\{\u{Space}*    {
-    process_macro(str_temp,current_regex);
-    rl.in.set_source(current_regex.data(),current_regex.size());
+    rl.in.set_source(current_regex);
     rp.parse();
     #ifndef YUKI_LEX_MAX_REGEX_PRINTABLE
     #define YUKI_LEX_MAX_REGEX_PRINTABLE 256
     #endif
-    if(str_temp.size()>YUKI_LEX_MAX_REGEX_PRINTABLE)
-        str_temp.resize(YUKI_LEX_MAX_REGEX_PRINTABLE);
-    current_regex=std::move(str_temp);
+    if(current_regex.size()>YUKI_LEX_MAX_REGEX_PRINTABLE)
+        current_regex.resize(YUKI_LEX_MAX_REGEX_PRINTABLE);
     brace_level=0;
     state=State::REGEX_CODE;
 }
@@ -398,7 +293,7 @@ void write_fsm_code(
     current_before.clear();
     state=State::REGEX_CODE_BEFORE;
 }
-.    {str_temp.append(matched);}
+.    {current_regex.append(matched);}
 }
 
 
@@ -650,7 +545,8 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
             for(;i<next_head;++i)
                 fprintf(out_cpp,"0,");
             assert(i==next_head);
-            fprintf(out_cpp,"%zu",head_counter++);
+            fprintf(out_cpp,"%zu,",head_counter++);
+            ++i;
         }
         fprintf(out_cpp,"};\n");
     }else

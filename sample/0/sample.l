@@ -60,6 +60,12 @@ a(?=b)    {/*3*/fprintf(stderr,"%zu\n",in.u_count-u_count_prev);}
 }
 }
 
+<STATE2>{
+\p{Graph}    {/*8*/}
+\u1234    {/*6*/}
+\u{All}    {/*7*/}
+}
+
 %%
 namespace xxx{
 template size_t Blah<int,0>::lex();

@@ -30,16 +30,8 @@ if(NOT YUKI_LEX_BUILD_WITH_PREGEN)
     add_custom_target(build-time-make-directory ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/gen)
 
-    add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/gen/Regex_Lexer.cpp ${PROJECT_SOURCE_DIR}/gen/Regex_Lexer.h
-        COMMAND ylex -i Regex_Lexer.l -o gen/Regex_Lexer.cpp
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        DEPENDS Regex_Lexer.l build-time-make-directory
-        COMMENT "ylex-ing Regex_Lexer.l")
-    add_custom_target(Regex_Lexer
-        DEPENDS ${PROJECT_SOURCE_DIR}/gen/Regex_Lexer.cpp ${PROJECT_SOURCE_DIR}/gen/Regex_Lexer.h)
-
     add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.cpp ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.h ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.token.hpp
-        COMMAND ypg -i Regex_Parser.y -o gen/Regex_Parser.cpp -l Regex_Parser.log
+        COMMAND ypg -i Regex_Parser.y -o gen/Regex_Parser.cpp -l gen/Regex_Parser.log
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         DEPENDS Regex_Parser.y build-time-make-directory
         COMMENT "ypg-ing Regex_Parser.y")
@@ -55,7 +47,7 @@ if(NOT YUKI_LEX_BUILD_WITH_PREGEN)
         DEPENDS ${PROJECT_SOURCE_DIR}/gen/Meta_Lexer.cpp ${PROJECT_SOURCE_DIR}/gen/Meta_Lexer.h)
 endif()
 
-add_executable(ylex main.cpp gen/Regex_Lexer.cpp gen/Regex_Parser.cpp gen/Meta_Lexer.cpp write_fsm_code.cpp)
+add_executable(ylex main.cpp gen/Regex_Parser.cpp gen/Meta_Lexer.cpp write_fsm_code.cpp)
 target_link_libraries(ylex fmt reflex)
 
 install(DIRECTORY include/yuki TYPE INCLUDE)

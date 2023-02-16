@@ -1079,7 +1079,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads){
     const typename I::Pos pos_begin=in.get_pos();
     typename I::Pos pos_take=in.get_pos();
     typename I::Pos pos_head=in.get_pos();
-    static constexpr size_t HEAD_MAP[1]={0};
+    static constexpr size_t HEAD_MAP[1]={0,};
   S0:
     pos_head=in.get_pos();
     c=in.get();
@@ -2706,7 +2706,7 @@ case State::MACRO_DEF:{
         {
 str_temp.assign("(");
     str_temp.append(matched).push_back(')');
-    const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
+    const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = rl.macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
     if(!emplace_ret.second){
         fprintf(stderr,"Error: Multiple definition of macro \"%s\"!\n",emplace_ret.first->first.c_str());
         ++errors_;
@@ -3042,15 +3042,13 @@ case State::REGEX:{
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
-process_macro(str_temp,current_regex);
-    rl.in.set_source(current_regex.data(),current_regex.size());
+rl.in.set_source(current_regex);
     rp.parse();
     #ifndef YUKI_LEX_MAX_REGEX_PRINTABLE
     #define YUKI_LEX_MAX_REGEX_PRINTABLE 256
     #endif
-    if(str_temp.size()>YUKI_LEX_MAX_REGEX_PRINTABLE)
-        str_temp.resize(YUKI_LEX_MAX_REGEX_PRINTABLE);
-    current_regex=std::move(str_temp);
+    if(current_regex.size()>YUKI_LEX_MAX_REGEX_PRINTABLE)
+        current_regex.resize(YUKI_LEX_MAX_REGEX_PRINTABLE);
     brace_level=0;
     state=State::REGEX_CODE;
         }
@@ -3094,7 +3092,7 @@ brace_level=0;
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=5 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
-str_temp.append(matched);
+current_regex.append(matched);
         }
         in.clear_matched();
         break;
@@ -3847,7 +3845,8 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
             for(;i<next_head;++i)
                 fprintf(out_cpp,"0,");
             assert(i==next_head);
-            fprintf(out_cpp,"%zu",head_counter++);
+            fprintf(out_cpp,"%zu,",head_counter++);
+            ++i;
         }
         fprintf(out_cpp,"};\n");
     }else

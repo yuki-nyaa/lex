@@ -296,11 +296,13 @@ struct Ultimate_Input_Tp : private With_Enc<Ultimate_Input_Raw<RAW_BUFFER_DEFAUL
     void set_source(FILE* const f) {set_source_impl_(f);}
     void set_source(const char* const s) {set_source_impl_(s);}
     void set_source(const char* const s,const size_t sz) {set_source_impl_(s,sz);}
+    void set_source(const std::string_view sv) {set_source_impl_(sv);}
 
     // Unlike `set_source`s, `continue_source`s do not discard the U8 buffer and do not reset the positions. (But the buffer in `BufferedInput_Base` is still discarded.)
     void continue_source(FILE* const f) {BufferedInput_Base::set_source(f);}
     void continue_source(const char* const s) {BufferedInput_Base::set_source(s);}
     void continue_source(const char* const s,const size_t sz) {BufferedInput_Base::set_source(s,sz);}
+    void continue_source(const std::string_view sv) {BufferedInput_Base::set_source(sv);}
   private:
     static constexpr size_t expand_u8_calc(const size_t size,const size_t added){
         const size_t size_pending = size<added ? size+added : 2*size;

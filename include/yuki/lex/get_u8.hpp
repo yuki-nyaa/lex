@@ -2,6 +2,33 @@
 #include<yuki/unicode.hpp>
 
 namespace yuki::lex{
+
+template<typename I>
+yuki::U8Char get_u8(I& input){
+    if(const int c=input.get(); c!=EOF){
+        unsigned char utf8_buf[4];
+        switch(yuki::u8_length(c)){
+            case 1: return yuki::U8Char(0,0,0,c);
+            case 2:{
+                assert(input.getable());
+                return yuki::U8Char(0,0,c,input.get());
+            }
+            case 3:{
+                const size_t read=input.read(utf8_buf,1,2);
+                assert(read==2);
+                return yuki::U8Char(0,c,utf8_buf[0],utf8_buf[1]);
+            }
+            case 4:{
+                const size_t read=input.read(utf8_buf,1,3);
+                assert(read==3);
+                return yuki::U8Char(c,utf8_buf[0],utf8_buf[1],utf8_buf[2]);
+            }
+            default: assert(false);
+        }
+    }
+    return yuki::EOF_U8;
+}
+
 template<typename I>
 yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp){
     using yuki::U8Char;
@@ -9,29 +36,7 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
     using yuki::encoding;
     unsigned char utf8_buf[4];
     switch(enc){
-        case encoding::utf8:{
-            if(const int c=input.get(); c!=EOF){
-                switch(yuki::u8_length(c)){
-                    case 1: return U8Char(0,0,0,c);
-                    case 2:{
-                        assert(input.getable());
-                        return U8Char(0,0,c,input.get());
-                    }
-                    case 3:{
-                        const size_t read=input.read(utf8_buf,1,2);
-                        assert(read==2);
-                        return U8Char(0,c,utf8_buf[0],utf8_buf[1]);
-                    }
-                    case 4:{
-                        const size_t read=input.read(utf8_buf,1,3);
-                        assert(read==3);
-                        return U8Char(c,utf8_buf[0],utf8_buf[1],utf8_buf[2]);
-                    }
-                    default: assert(false);
-                }
-            }
-            break;
-        }
+        case encoding::utf8: return get_u8(input);
         case encoding::utf16be:{
             switch(input.read(utf8_buf,1,2)){
                 case 0: return yuki::EOF_U8;

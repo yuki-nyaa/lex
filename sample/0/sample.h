@@ -30,11 +30,13 @@ namespace Blah_fsm_codes{
     size_t INITIAL(I&,typename I::Pos*);
     template<typename I>
     size_t STATE1(I&,typename I::Pos*);
+    template<typename I>
+    size_t STATE2(I&,typename I::Pos*);
 } // namespace Blah_fsm_codes
 
 template<typename T,int i>
 struct Blah{
-    enum struct State {INITIAL,STATE1,} state=State::INITIAL;
+    enum struct State {INITIAL,STATE1,STATE2,} state=State::INITIAL;
     std::string_view matched;
     yuki::lex::U8Input in;
     #ifdef YUKI_LEX_Blah_DBG

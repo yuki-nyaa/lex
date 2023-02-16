@@ -1,6 +1,5 @@
 #include"cconfig"
 #include"gen/Meta_Lexer.h"
-#include"gen/Regex_Lexer.h"
 #include"gen/Regex_Parser.h"
 #include<cstdlib>
 int main(int argc,char** argv){

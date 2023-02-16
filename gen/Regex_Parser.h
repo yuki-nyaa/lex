@@ -1,7 +1,7 @@
 #pragma once
 
 #include<yuki/Vector.hpp>
-#include"gen/Regex_Lexer.h"
+#include"Regex_Lexer.hpp"
 #ifndef YUKI_LEX_FSM_FACTORY_POOL_BLOCK
 #define YUKI_LEX_FSM_FACTORY_POOL_BLOCK 256
 #endif

@@ -324,14 +324,41 @@ struct State_Ex{
 
 
 namespace yuki::lex{
+struct Wrapped_UC {unsigned char c;};
 struct Wrapped_C32 {char32_t c32;};
 }
+
+template<>
+struct fmt::formatter<yuki::lex::Wrapped_UC,char> : yuki::simple_formatter<yuki::lex::Wrapped_UC,char> {
+    template<typename OutputIt>
+    static auto format(const yuki::lex::Wrapped_UC wuc,fmt::basic_format_context<OutputIt,char>& ctx) -> typename fmt::basic_format_context<OutputIt,char>::iterator {
+        using namespace yuki::literals;
+        switch(wuc.c){
+            case '\''_uc : return fmt::format_to(ctx.out(),"\'\\\'\'_uc"); // Rather cryptic...
+            case '\"'_uc : return fmt::format_to(ctx.out(),"\'\\\"\'_uc"); // Rather cryptic...
+            case '\\'_uc : return fmt::format_to(ctx.out(),"\'\\\\\'_uc"); // Rather cryptic...
+            case '\a'_uc : return fmt::format_to(ctx.out(),"\'\\a\'_uc");
+            case '\b'_uc : return fmt::format_to(ctx.out(),"\'\\b\'_uc");
+            case '\f'_uc : return fmt::format_to(ctx.out(),"\'\\f\'_uc");
+            case '\n'_uc : return fmt::format_to(ctx.out(),"\'\\n\'_uc");
+            case '\r'_uc : return fmt::format_to(ctx.out(),"\'\\r\'_uc");
+            case '\t'_uc : return fmt::format_to(ctx.out(),"\'\\t\'_uc");
+            case '\v'_uc : return fmt::format_to(ctx.out(),"\'\\v\'_uc");
+            default:{
+                if(isprint(wuc.c))
+                    return fmt::format_to(ctx.out(),"\'{}\'_uc",static_cast<char>(wuc.c));
+                else
+                    return fmt::format_to(ctx.out(),"0x{:X}U",static_cast<unsigned>(wuc.c));
+            }
+        }
+    }
+};
 
 template<>
 struct fmt::formatter<yuki::lex::Wrapped_C32,char> : yuki::simple_formatter<yuki::lex::Wrapped_C32,char> {
     template<typename OutputIt>
     static auto format(const yuki::lex::Wrapped_C32 wc32,fmt::basic_format_context<OutputIt,char>& ctx) -> typename fmt::basic_format_context<OutputIt,char>::iterator {
-        if(wc32.c32<0x80){
+        if(wc32.c32<0x80U){
             switch(wc32.c32){
                 case U'\'' : return fmt::format_to(ctx.out(),"\'\\\'\'_u8"); // Rather cryptic...
                 case U'\"' : return fmt::format_to(ctx.out(),"\'\\\"\'_u8"); // Rather cryptic...
