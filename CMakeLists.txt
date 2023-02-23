@@ -48,7 +48,7 @@ if(NOT YUKI_LEX_BUILD_WITH_PREGEN)
 endif()
 
 add_executable(ylex main.cpp gen/Regex_Parser.cpp gen/Meta_Lexer.cpp write_fsm_code.cpp)
-target_link_libraries(ylex fmt reflex)
+target_link_libraries(ylex fmt)
 
 install(DIRECTORY include/yuki TYPE INCLUDE)
 install(TARGETS ylex RUNTIME)

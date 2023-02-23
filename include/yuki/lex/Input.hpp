@@ -3,7 +3,7 @@
 #include<cstdio>
 #include<cstring>
 #include<cassert>
-#include<string>
+#include<string_view>
 
 namespace yuki::lex{
 
@@ -360,6 +360,7 @@ struct Input{
         switch(source_type_){
             case Source_Type::S: i_cstr.set_pos(pos);return;
             case Source_Type::SV: i_sv.set_pos(pos);return;
+            default:;
         }
     }
     constexpr std::string_view matched(const Pos pos_begin) const {

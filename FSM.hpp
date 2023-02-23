@@ -105,7 +105,7 @@ struct Node_Pool{
 
 
 #include<yuki/Map_OV.hpp>
-#include"Char_Class.hpp"
+#include<yuki/Interval.hpp>
 
 namespace yuki::lex{
 
@@ -120,7 +120,7 @@ struct Amount{
 struct FSM_Node;
 
 struct FSM_Edge{
-    Char_Class cc;
+    yuki::IntegralCIs_OV<char32_t> cc;
     const FSM_Node* node;
 };
 
@@ -168,12 +168,12 @@ struct FSM_Edges{
         return *this;
     }
 
-    FSM_Edges(Char_Class&& cc,const FSM_Node* const n) noexcept {vec_.emplace_back(std::move(cc),n);}
+    FSM_Edges(yuki::IntegralCIs_OV<char32_t>&& cc,const FSM_Node* const n) noexcept {vec_.emplace_back(std::move(cc),n);}
     FSM_Edges(const int mc,const FSM_Node* const n) noexcept : meta{mc,n} {}
 
     const vec_type& normal_edges() const {return vec_;}
 
-    void emplace(Char_Class&& cc,const FSM_Node* const n) {vec_.emplace_back(std::move(cc),n);}
+    void emplace(yuki::IntegralCIs_OV<char32_t>&& cc,const FSM_Node* const n) {vec_.emplace_back(std::move(cc),n);}
 
     /// @pre `*this` and `other` cannot both have an epsilon_back edge at the same time.
     /// @pre `*this` and `other` cannot both have a meta edge at the same time.
@@ -208,7 +208,7 @@ struct FSM_Node{
     enum struct Kind : unsigned {DTA,DA,LTA,LA,TA,A,  H,N}; // Do not change the order!!
 
     struct Less_By_Number{
-        static bool compare(const FSM_Node* const lhs,const FSM_Node* const rhs) {return lhs->number < rhs->number;}
+        bool operator()(const FSM_Node* const lhs,const FSM_Node* const rhs) const {return lhs->number < rhs->number;}
     };
 };
 
@@ -217,7 +217,7 @@ struct FSM{
     FSM_Node* accept;
     size_t size;
 
-    FSM& concat(Char_Class&& cc,FSM_Node* const n){
+    FSM& concat(yuki::IntegralCIs_OV<char32_t>&& cc,FSM_Node* const n){
         accept->edges.emplace(std::move(cc),n);
         accept = n;
         ++size;
@@ -260,7 +260,7 @@ struct FSM_Factory : private A{
         return n;
     }
 
-    template<typename... CC_Args,typename=std::enable_if_t<std::is_constructible_v<Char_Class,CC_Args&&...>>>
+    template<typename... CC_Args,typename=std::enable_if_t<std::is_constructible_v<yuki::IntegralCIs_OV<char32_t>,CC_Args&&...>>>
     FSM make_fsm(const size_t branch,CC_Args&&... cc_args){
         FSM_Node* const start = A::allocate();
         FSM_Node* const accept = A::allocate();
@@ -348,9 +348,9 @@ struct FSM_Factory : private A{
 
     /// \r?\n
     FSM make_esc_N(const size_t branch){
-        FSM fsm = make_fsm(branch,Char_Class({U'\r',U'\r'}));
+        FSM fsm = make_fsm(branch,yuki::IntegralCIs_OV<char32_t>({U'\r',U'\r'}));
         fsm = make_qmark(branch,fsm);
-        return fsm.concat(Char_Class({U'\n',U'\n'}),make_node(branch));
+        return fsm.concat(yuki::IntegralCIs_OV<char32_t>({U'\n',U'\n'}),make_node(branch));
     }
 }; // struct FSM_Factory<A>
 

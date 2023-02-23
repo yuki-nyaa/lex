@@ -524,7 +524,7 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
 
     fprintf(out_cpp,
         "template<typename I>\n"
-        "size_t %s::%s(I& in,typename I::Pos* const heads){\n"
+        "size_t %s::%s(I& in,typename I::Pos* const heads) noexcept {\n"
         IND "using namespace yuki::literals;\n"
         IND "decltype(in.get()) c;\n"
         IND "size_t cap=0;\n"
@@ -615,7 +615,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
         str_temp.append(nrc.name).push_back(',');
         fprintf(out_h,
             IND "template<typename I>\n"
-            IND "size_t %s(I&,typename I::Pos*);\n",
+            IND "size_t %s(I&,typename I::Pos*) noexcept;\n",
             nrc.name.c_str()
         );
 

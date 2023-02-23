@@ -7,7 +7,7 @@ template<typename I>
 yuki::U8Char get_u8(I& input){
     if(const int c=input.get(); c!=EOF){
         unsigned char utf8_buf[4];
-        switch(yuki::u8_length(c)){
+        switch(yuki::u8_length_byte(c)){
             case 1: return yuki::U8Char(0,0,0,c);
             case 2:{
                 assert(input.getable());
@@ -32,7 +32,7 @@ yuki::U8Char get_u8(I& input){
 template<typename I>
 yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp){
     using yuki::U8Char;
-    using yuki::to_u8;
+    using yuki::to_u32;
     using yuki::encoding;
     unsigned char utf8_buf[4];
     switch(enc){
@@ -42,12 +42,12 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
                 case 0: return yuki::EOF_U8;
                 case 1: assert(false);
                 case 2:{
-                    switch(yuki::u16_length(utf8_buf[0])){
-                        case 1: return to_u8<encoding::utf16be>::convert(0,0,utf8_buf[0],utf8_buf[1]);
-                        case 2:{
+                    switch(yuki::u16_length_byte(utf8_buf[0])){
+                        case 2: return to_u32<encoding::utf16be>(0,0,utf8_buf[0],utf8_buf[1]);
+                        case 4:{
                             const size_t read1 = input.read(utf8_buf+2,1,2);
                             assert(read1==2);
-                            return to_u8<encoding::utf16be>::convert(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
+                            return to_u32<encoding::utf16be>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
                         }
                         default: assert(false);
                     }
@@ -60,12 +60,12 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
                 case 0: return yuki::EOF_U8;
                 case 1: assert(false);
                 case 2:{
-                    switch(yuki::u16_length(utf8_buf[1])){
-                        case 1: return to_u8<encoding::utf16le>::convert(0,0,utf8_buf[0],utf8_buf[1]);
-                        case 2:{
+                    switch(yuki::u16_length_byte(utf8_buf[1])){
+                        case 2: return to_u32<encoding::utf16le>(0,0,utf8_buf[0],utf8_buf[1]);
+                        case 4:{
                             const size_t read1 = input.read(utf8_buf+2,1,2);
                             assert(read1==2);
-                            return to_u8<encoding::utf16le>::convert(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
+                            return to_u32<encoding::utf16le>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
                         }
                         default: assert(false);
                     }
@@ -74,29 +74,19 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
             break;
         }
         case encoding::utf32be:{
-            switch(input.read(utf8_buf,1,4)){
-                case 0: return yuki::EOF_U8;
-                case 4: return to_u8<encoding::utf32be>::convert(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
-                default: assert(false);
-            }
-            break;
+            return input.read(utf8_buf,1,4)==4 ? to_u32<encoding::utf32be>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]) : yuki::EOF_U8;
         }
         case encoding::utf32le:{
-            switch(input.read(utf8_buf,1,4)){
-                case 0: return yuki::EOF_U8;
-                case 4: return to_u8<encoding::utf32le>::convert(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
-                default: assert(false);
-            }
-            break;
+            return input.read(utf8_buf,1,4)==4 ? to_u32<encoding::utf32le>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]) : yuki::EOF_U8;
         }
         case encoding::latin1:{
             if(const int c=input.get(); c!=EOF)
-                return to_u8<encoding::latin1>::convert(c);
+                return to_u32<encoding::latin1>(c);
             break;
         }
         case encoding::custom:{
             if(const int c=input.get(); c!=EOF)
-                return to_u8<encoding::custom>::convert(c,cp);
+                return yuki::to_u32_custom(c,cp);
             break;
         }
         #ifdef YUKI_LEX_WITH_RARE_ENCODINGS

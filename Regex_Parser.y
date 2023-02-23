@@ -1,11 +1,11 @@
 %nterm Regex {FSM:;};
-%nterm Char_Class {Char_Class:;};
-%nterm Char_Interval {Char_Interval:;};
-%nterm Char_Intervals {Char_Class:;};
+%nterm Char_Class {yuki::IntegralCIs_OV<char32_t>:;};
+%nterm Char_Interval {yuki::CInterval<char32_t>:;};
+%nterm Char_Intervals {yuki::IntegralCIs_OV<char32_t>:;};
 %term amount {Amount:;};
 %term character {char32_t:;};
 %term meta_char {int:;};
-%term basic_char_class {Char_Class:;};
+%term basic_char_class {yuki::IntegralCIs_OV<char32_t>:;};
 %term paren_l "(" {};
 %term paren_r ")" {};
 %term sqparen_l "[" {};
@@ -149,7 +149,7 @@ Regex:
         {}
     |
     character
-        {ff.make_fsm(branch,Char_Interval{$0,$0})}
+        {ff.make_fsm(branch,yuki::CInterval<char32_t>{$0,$0})}
         {}
     |
     meta_char
@@ -193,11 +193,11 @@ Char_Class:
         {}
     |
     "[" "^" Char_Class "]"
-        {!$2}
+        {yuki::negate<{U'\0',yuki::UNICODE_MAX_32}>($2)}
         {}
     |
     "[" "^" Char_Intervals "]"
-        {!$2}
+        {yuki::negate<{U'\0',yuki::UNICODE_MAX_32}>($2)}
         {}
     |
     "[" Char_Class "-" Char_Class "]"

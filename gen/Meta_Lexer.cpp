@@ -7,7 +7,7 @@
 
 namespace yuki::lex{
 template<typename I>
-size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -834,7 +834,7 @@ size_t Meta_Lexer_fsm_codes::INITIAL(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_NSPACE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_NSPACE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -859,7 +859,7 @@ size_t Meta_Lexer_fsm_codes::O_NSPACE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_LEXER(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_LEXER(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -884,7 +884,7 @@ size_t Meta_Lexer_fsm_codes::O_LEXER(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_ICLASS(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_ICLASS(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -909,7 +909,7 @@ size_t Meta_Lexer_fsm_codes::O_ICLASS(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_IHEADER(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_IHEADER(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -934,7 +934,7 @@ size_t Meta_Lexer_fsm_codes::O_IHEADER(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_DPREFIX(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_DPREFIX(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -959,7 +959,7 @@ size_t Meta_Lexer_fsm_codes::O_DPREFIX(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_FCNSPACE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_FCNSPACE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -984,7 +984,7 @@ size_t Meta_Lexer_fsm_codes::O_FCNSPACE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_TTYPE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_TTYPE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1009,7 +1009,7 @@ size_t Meta_Lexer_fsm_codes::O_TTYPE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::O_TPLEXER(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::O_TPLEXER(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1034,7 +1034,7 @@ size_t Meta_Lexer_fsm_codes::O_TPLEXER(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1072,7 +1072,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(I& in,typename I::Pos* const
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1111,7 +1111,7 @@ size_t Meta_Lexer_fsm_codes::MACRO_DEF(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1194,7 +1194,7 @@ size_t Meta_Lexer_fsm_codes::CODE0(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::CODE1(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::CODE1(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1232,7 +1232,7 @@ size_t Meta_Lexer_fsm_codes::CODE1(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::C_LIT(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::C_LIT(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1267,7 +1267,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::S_LIT(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::S_LIT(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1302,7 +1302,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1417,7 +1417,7 @@ size_t Meta_Lexer_fsm_codes::SEC1(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::GOBBLE_NEWLINE_TO_REGEX(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::GOBBLE_NEWLINE_TO_REGEX(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1439,7 +1439,7 @@ size_t Meta_Lexer_fsm_codes::GOBBLE_NEWLINE_TO_REGEX(I& in,typename I::Pos* cons
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1791,7 +1791,7 @@ size_t Meta_Lexer_fsm_codes::REGEX(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::REGEX_CODE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::REGEX_CODE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1829,7 +1829,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1862,7 +1862,7 @@ size_t Meta_Lexer_fsm_codes::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I& i
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::REGEX_CODE_EOF(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::REGEX_CODE_EOF(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1900,7 +1900,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_EOF(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::C_LIT_EOF(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::C_LIT_EOF(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1935,7 +1935,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_EOF(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::S_LIT_EOF(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::S_LIT_EOF(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -1970,7 +1970,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_EOF(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::REGEX_CODE_DEFAULT(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::REGEX_CODE_DEFAULT(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2008,7 +2008,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_DEFAULT(I& in,typename I::Pos* const hea
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::C_LIT_DEFAULT(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::C_LIT_DEFAULT(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2043,7 +2043,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_DEFAULT(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::S_LIT_DEFAULT(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::S_LIT_DEFAULT(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2078,7 +2078,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_DEFAULT(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::REGEX_CODE_BEFORE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::REGEX_CODE_BEFORE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2116,7 +2116,7 @@ size_t Meta_Lexer_fsm_codes::REGEX_CODE_BEFORE(I& in,typename I::Pos* const head
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::C_LIT_BEFORE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::C_LIT_BEFORE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2151,7 +2151,7 @@ size_t Meta_Lexer_fsm_codes::C_LIT_BEFORE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::S_LIT_BEFORE(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::S_LIT_BEFORE(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2186,7 +2186,7 @@ size_t Meta_Lexer_fsm_codes::S_LIT_BEFORE(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -2261,7 +2261,7 @@ size_t Meta_Lexer_fsm_codes::POST_REGEX(I& in,typename I::Pos* const heads){
 
 
 template<typename I>
-size_t Meta_Lexer_fsm_codes::SEC2(I& in,typename I::Pos* const heads){
+size_t Meta_Lexer_fsm_codes::SEC2(I& in,typename I::Pos* const heads) noexcept {
     using namespace yuki::literals;
     decltype(in.get()) c;
     size_t cap=0;
@@ -3824,7 +3824,7 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
 
     fprintf(out_cpp,
         "template<typename I>\n"
-        "size_t %s::%s(I& in,typename I::Pos* const heads){\n"
+        "size_t %s::%s(I& in,typename I::Pos* const heads) noexcept {\n"
         IND "using namespace yuki::literals;\n"
         IND "decltype(in.get()) c;\n"
         IND "size_t cap=0;\n"
@@ -3915,7 +3915,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
         str_temp.append(nrc.name).push_back(',');
         fprintf(out_h,
             IND "template<typename I>\n"
-            IND "size_t %s(I&,typename I::Pos*);\n",
+            IND "size_t %s(I&,typename I::Pos*) noexcept;\n",
             nrc.name.c_str()
         );
 

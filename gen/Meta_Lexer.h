@@ -47,67 +47,67 @@ inline FILE* const YUKI_LEX_Meta_Lexer_DBG_fp_=fopen(YUKI_LEX_Meta_Lexer_DBG_LOG
 namespace yuki::lex{
 namespace Meta_Lexer_fsm_codes{
     template<typename I>
-    size_t INITIAL(I&,typename I::Pos*);
+    size_t INITIAL(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_NSPACE(I&,typename I::Pos*);
+    size_t O_NSPACE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_LEXER(I&,typename I::Pos*);
+    size_t O_LEXER(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_ICLASS(I&,typename I::Pos*);
+    size_t O_ICLASS(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_IHEADER(I&,typename I::Pos*);
+    size_t O_IHEADER(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_DPREFIX(I&,typename I::Pos*);
+    size_t O_DPREFIX(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_FCNSPACE(I&,typename I::Pos*);
+    size_t O_FCNSPACE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_TTYPE(I&,typename I::Pos*);
+    size_t O_TTYPE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t O_TPLEXER(I&,typename I::Pos*);
+    size_t O_TPLEXER(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t MACRO_DEF_GOBBLE_SPACE(I&,typename I::Pos*);
+    size_t MACRO_DEF_GOBBLE_SPACE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t MACRO_DEF(I&,typename I::Pos*);
+    size_t MACRO_DEF(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t CODE0(I&,typename I::Pos*);
+    size_t CODE0(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t CODE1(I&,typename I::Pos*);
+    size_t CODE1(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t C_LIT(I&,typename I::Pos*);
+    size_t C_LIT(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t S_LIT(I&,typename I::Pos*);
+    size_t S_LIT(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t SEC1(I&,typename I::Pos*);
+    size_t SEC1(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t GOBBLE_NEWLINE_TO_REGEX(I&,typename I::Pos*);
+    size_t GOBBLE_NEWLINE_TO_REGEX(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t REGEX(I&,typename I::Pos*);
+    size_t REGEX(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t REGEX_CODE(I&,typename I::Pos*);
+    size_t REGEX_CODE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I&,typename I::Pos*);
+    size_t DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t REGEX_CODE_EOF(I&,typename I::Pos*);
+    size_t REGEX_CODE_EOF(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t C_LIT_EOF(I&,typename I::Pos*);
+    size_t C_LIT_EOF(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t S_LIT_EOF(I&,typename I::Pos*);
+    size_t S_LIT_EOF(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t REGEX_CODE_DEFAULT(I&,typename I::Pos*);
+    size_t REGEX_CODE_DEFAULT(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t C_LIT_DEFAULT(I&,typename I::Pos*);
+    size_t C_LIT_DEFAULT(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t S_LIT_DEFAULT(I&,typename I::Pos*);
+    size_t S_LIT_DEFAULT(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t REGEX_CODE_BEFORE(I&,typename I::Pos*);
+    size_t REGEX_CODE_BEFORE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t C_LIT_BEFORE(I&,typename I::Pos*);
+    size_t C_LIT_BEFORE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t S_LIT_BEFORE(I&,typename I::Pos*);
+    size_t S_LIT_BEFORE(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t POST_REGEX(I&,typename I::Pos*);
+    size_t POST_REGEX(I&,typename I::Pos*) noexcept;
     template<typename I>
-    size_t SEC2(I&,typename I::Pos*);
+    size_t SEC2(I&,typename I::Pos*) noexcept;
 } // namespace Meta_Lexer_fsm_codes
 
 

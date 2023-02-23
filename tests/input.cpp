@@ -14,7 +14,7 @@ void print_u8(const yuki::U8Char u8c,FILE* const fp = stdout){
     u8c.write_to(arr);
     for(unsigned i=0;i<4;++i)
         if(arr[i]!=0)
-            fprintf(fp,"%x ",arr[i]);
+            fprintf(fp,"%x ",unsigned(arr[i]));
 }
 int main(){
     using namespace yuki::lex;
@@ -62,11 +62,11 @@ int main(){
     char32_t* u32p = u32arr1;
     U8Char u8c;
     for(size_t i=0;i!=arr2_s;){
-        u8c.set(p);
+        char* p_new = u8c.set(p);
         *u32p = static_cast<char32_t>(u8c);
         printf("%x ",*u32p++);
-        p+=u8c.length();
-        i+=u8c.length();
+        i+=(p_new-p);
+        p=p_new;
         ++u32arr1_s;
     }
     }

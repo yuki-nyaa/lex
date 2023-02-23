@@ -87,7 +87,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
     yuki::U8Char get_impl(){
         if(pp_br<e_br){
             assert(ByteInput_Base::needs_buffer());
-            const unsigned u8l = yuki::u8_length(static_cast<unsigned char>(br[pp_br]));
+            const unsigned u8l = yuki::u8_length_byte(static_cast<unsigned char>(br[pp_br]));
             const size_t after = e_br-pp_br;
             if(u8l>after){
                 const unsigned remaining = u8l-after;
@@ -104,7 +104,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
 
         if(ByteInput_Base::needs_buffer()){
             if(Input::getable()){
-                const unsigned u8l = yuki::u8_length(Input::peek());
+                const unsigned u8l = yuki::u8_length_byte(Input::peek());
                 adjust_buffer_for(u8l);
                 const size_t filled = BufferedInput_Base::fill_buffer();
                 assert(filled>=u8l);
@@ -116,7 +116,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
             }
         }else{
             if(const int p=Input::peek(); p!=EOF){
-                const unsigned u8l = yuki::u8_length(p);
+                const unsigned u8l = yuki::u8_length_byte(p);
                 unsigned char buf[4];
                 const size_t read = Input::read(buf,1,u8l);
                 assert(read==u8l);
@@ -141,7 +141,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
     yuki::U8Char peek(){
         if(pp_br<e_br){
             assert(ByteInput_Base::needs_buffer());
-            const unsigned u8l = yuki::u8_length(static_cast<unsigned char>(br[pp_br]));
+            const unsigned u8l = yuki::u8_length_byte(static_cast<unsigned char>(br[pp_br]));
             const size_t after = e_br-pp_br;
             if(u8l>after){
                 const unsigned remaining = u8l-after;
@@ -154,7 +154,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
 
         if(ByteInput_Base::needs_buffer()){
             if(Input::getable()){
-                const unsigned u8l = yuki::u8_length(Input::peek());
+                const unsigned u8l = yuki::u8_length_byte(Input::peek());
                 adjust_buffer_for(u8l);
                 const size_t filled = BufferedInput_Base::fill_buffer();
                 assert(filled>=u8l);
@@ -162,7 +162,7 @@ struct U8Input_Tp : private ByteInput_Base_With_Pos<U8Input_Poss>{
             }
         }else{
             if(const int p=Input::peek(); p!=EOF){
-                const unsigned u8l = yuki::u8_length(p);
+                const unsigned u8l = yuki::u8_length_byte(p);
                 unsigned char buf[4];
                 const size_t peeked = Input::peek(buf,u8l);
                 assert(peeked==u8l);

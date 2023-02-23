@@ -41,7 +41,7 @@ struct Regex_Parser_TS{
 
     struct Token_Index_Table;
 
-    typedef yuki::pg::VToken<Token_Kind_t,Token_Index_Table,int,char32_t,Amount,Char_Interval,Char_Class,FSM> Token_t;
+    typedef yuki::pg::VToken<Token_Kind_t,Token_Index_Table,int,char32_t,Amount,yuki::CInterval<char32_t>,yuki::IntegralCIs_OV<char32_t>,FSM> Token_t;
     typedef void Token;
 }; // struct Regex_Parser_TS
 

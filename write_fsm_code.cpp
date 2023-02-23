@@ -6,6 +6,7 @@
 #include<yuki/Set_OV.hpp>
 #include<yuki/Map.hpp>
 #include<yuki/print.hpp>
+#include<yuki/unicode.hpp>
 #include"FSM.hpp"
 
 #define HIND YUKI_LEX_HIND
@@ -158,7 +159,7 @@ struct State{
             if(std::strong_ordering cmp = lhs.branches_.front().size()<=>rhs.branches_.front().size();cmp!=0) return cmp;
             return std::strong_ordering::equal;
         }
-        static bool compare(const State& lhs,const State& rhs) {return compare3(lhs,rhs)==std::strong_ordering::less;}
+        bool operator()(const State& lhs,const State& rhs) const {return compare3(lhs,rhs)==std::strong_ordering::less;}
     };
 
     friend bool state_equal(const State& lhs,const State& rhs){
@@ -400,11 +401,11 @@ struct fmt::formatter<yuki::lex::Wrapped_C32,char> : yuki::simple_formatter<yuki
 namespace yuki::lex{
 struct Transition{
     const size_t target;
-    Char_Class cc;
+    yuki::IntegralCIs_OV<char32_t> cc;
     State::post_heads_type post_heads;
 
     struct Target{
-        static size_t project(const Transition& t) {return t.target;}
+        size_t operator()(const Transition& t) const {return t.target;}
     };
 };
 
@@ -420,7 +421,7 @@ struct Transition_Table{
     void clear() {ov_.clear();}
 
     void insert(const char32_t c,yuki::Pair<State::post_heads_type&&,const size_t> p){
-        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_sep<true>(p.first,p.first,Char_Interval{c,c},std::move(p.zeroth));
+        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_sep<true>(p.first,p.first,CInterval<char32_t>{c,c},std::move(p.zeroth));
         if(!ibp.has_inserted){
             using yuki::const_kast;
             const_kast(ibp.iterator)->cc.insert(c);
@@ -435,7 +436,7 @@ struct Transition_Table{
         if(!ibp.has_inserted){
             using yuki::const_kast;
             const OV_::non_const_iterator it_nc = const_kast(ibp.iterator);
-            Char_Class cc_new = (it_nc->cc) + cc;
+            yuki::IntegralCIs_OV<char32_t> cc_new = (it_nc->cc) + cc;
             swap(cc_new,it_nc->cc);
             if constexpr(std::is_rvalue_reference_v<PH>)
                 p.zeroth.clear();
@@ -445,10 +446,10 @@ struct Transition_Table{
     void write(FILE* const out) const {
         for(const Transition& ts : ov_){
             fmt::print(out,IND "if(");
-            Char_Class::const_iterator i = ts.cc.begin();
-            const Char_Class::const_iterator e = ts.cc.end();
+            yuki::IntegralCIs_OV<char32_t>::const_iterator i = ts.cc.begin();
+            const yuki::IntegralCIs_OV<char32_t>::const_iterator e = ts.cc.end();
             {
-            const Char_Interval ci = *i;
+            const CInterval<char32_t> ci = *i;
             switch(ci.ub-ci.lb){
                 case 0 : fmt::print(out,"(c=={})",Wrapped_C32{ci.lb});break;
                 case 1 : fmt::print(out,"(c=={} || c=={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
@@ -465,7 +466,7 @@ struct Transition_Table{
             }
             for(;i!=e;++i){
                 fmt::print(out,"\n" IND "|| ");
-                const Char_Interval ci = *i;
+                const CInterval<char32_t> ci = *i;
                 switch(ci.ub-ci.lb){
                     case 0 : fmt::print(out,"(c=={})",Wrapped_C32{ci.lb});break;
                     case 1 : fmt::print(out,"(c=={} || c=={})",Wrapped_C32{ci.lb},Wrapped_C32{ci.ub});break;
@@ -495,7 +496,7 @@ struct Transition_Table{
 struct FSM_Edge_View{
     size_t branch_num;
     bool source_headed;
-    const Char_Class* cc;
+    const yuki::IntegralCIs_OV<char32_t>* cc;
     const FSM_Node* target;
 };
 
@@ -526,11 +527,11 @@ State_Ex next,next_always_resized,next2;
 yuki::RingQueue<State_Set::const_iterator> worklist{yuki::reserve_tag,YUKI_LEX_STATES_EXPECTED};
 yuki::RingQueue<bool> is_headed{yuki::reserve_tag,YUKI_LEX_STATES_EXPECTED};
 
-Char_Class cc_union{yuki::reserve_tag,YUKI_LEX_CC_UNION_RESERVE};
-Char_Class cc_temp,cc_temp2,cc_temp3;
+yuki::IntegralCIs_OV<char32_t> cc_union{yuki::reserve_tag,YUKI_LEX_CC_UNION_RESERVE};
+yuki::IntegralCIs_OV<char32_t> cc_temp,cc_temp2,cc_temp3;
 
-yuki::Vector<FSM_Edge_View> edge_views{yuki::reserve_tag,YUKI_LEX_MERGE_CC_RESERVE}; // The macro is defined in "Char_Class.hpp".
-yuki::Vector<size_t> edge_views_branch_indices{yuki::reserve_tag,YUKI_LEX_MERGE_CC_RESERVE}; // The macro is defined in "Char_Class.hpp".
+yuki::Vector<FSM_Edge_View> edge_views{yuki::reserve_tag,YUKI_IntegralCIs_OV_CLEAR_AND_MERGE_RESERVE}; // The macro is defined in <yuki/Interval.hpp>.
+yuki::Vector<size_t> edge_views_branch_indices{yuki::reserve_tag,YUKI_IntegralCIs_OV_CLEAR_AND_MERGE_RESERVE}; // The macro is defined in <yuki/Interval.hpp>.
 
 yuki::IB_Pair<State_Set::const_iterator> insert_state(State_Set& ss,State&& s){
     State_Set::const_iterator feg = ss.first_equiv_greater(s);
@@ -671,6 +672,7 @@ bool policy_edge_insert_meta(State_Ex& state_ex,const Meta_Edge me){
     return false;
 }
 
+bool is_complete(const yuki::IntegralCIs_OV<char32_t>& cc) {return cc.size()==1 && cc.front()==yuki::CInterval<char32_t>(0,yuki::UNICODE_MAX_32);}
 
 void policy_edge_3(const size_t fsms_size){
     YUKI_LEX_META_DBGO("S{} policy_edge_3\n",worklist.front()->mapped);
@@ -678,14 +680,14 @@ void policy_edge_3(const size_t fsms_size){
     const FSM_Edge_View edge_view1 = edge_views[1];
     const FSM_Edge_View edge_view2 = edge_views[2];
 
-    const Char_Class cc01 = (*edge_view0.cc) + (*edge_view1.cc);
-    if(cc01.is_complete())
-        cc_union.make_complete();
+    const yuki::IntegralCIs_OV<char32_t> cc01 = (*edge_view0.cc) + (*edge_view1.cc);
+    if(is_complete(cc01))
+        cc_union = yuki::CInterval<char32_t>(0,yuki::UNICODE_MAX_32);
     else
         cc_union = cc01 + (*edge_view2.cc);
 
-    const Char_Class cc0_1 = (*edge_view0.cc) * (*edge_view1.cc);
-    const Char_Class cc0_1_2 = cc0_1.empty() ? Char_Class{} : cc0_1*(*edge_view2.cc);
+    const yuki::IntegralCIs_OV<char32_t> cc0_1 = (*edge_view0.cc) * (*edge_view1.cc);
+    const yuki::IntegralCIs_OV<char32_t> cc0_1_2 = cc0_1.empty() ? yuki::IntegralCIs_OV<char32_t>{} : cc0_1*(*edge_view2.cc);
 
     cc_temp = (*edge_view0.cc)-((*edge_view1.cc)+(*edge_view2.cc));
     State_Ex s0;
@@ -754,28 +756,28 @@ void policy_edge_3(const size_t fsms_size){
 
 struct IEntry{
     uint_least64_t edge_indices; ///< @sa suffix_index
-    Char_Class cc;
+    yuki::IntegralCIs_OV<char32_t> cc;
     union{
     IEntry* stem;
     State_Ex* stem_base;
     };
     State_Ex* state_cached;
 
-    IEntry(const uint_least64_t a,Char_Class&& b,IEntry* const c) noexcept :
+    IEntry(const uint_least64_t a,yuki::IntegralCIs_OV<char32_t>&& b,IEntry* const c) noexcept :
         edge_indices(a),
         cc(std::move(b)),
         stem(c),
         state_cached(nullptr)
     {}
 
-    IEntry(const uint_least64_t a,Char_Class&& b,State_Ex* const c) noexcept :
+    IEntry(const uint_least64_t a,yuki::IntegralCIs_OV<char32_t>&& b,State_Ex* const c) noexcept :
         edge_indices(a),
         cc(std::move(b)),
         stem_base(c),
         state_cached(nullptr)
     {}
 
-    IEntry(const uint_least64_t a,Char_Class&& b) noexcept :
+    IEntry(const uint_least64_t a,yuki::IntegralCIs_OV<char32_t>&& b) noexcept :
         edge_indices(a),
         cc(std::move(b)),
         stem(nullptr),
@@ -794,7 +796,7 @@ struct IEntry{
 
 struct UEntry{
     uint_least64_t edge_indices;
-    Char_Class cc;
+    yuki::IntegralCIs_OV<char32_t> cc;
 };
 
 constexpr size_t suffix_index(const unsigned total_edges,const uint_least64_t subset) {return total_edges-1-std::countr_zero(subset);}
@@ -804,24 +806,7 @@ constexpr uint_least64_t stem(uint_least64_t subset) {return subset-=1ULL<<std::
 /// @pre `vec->edge_indices` should be arranged in descending order.
 template<typename V>
 auto first_less_equiv(V& vec,const uint_least64_t subset) -> decltype(vec.begin()) {
-    typename V::size_type count = vec.size();
-    if(count==0 || vec.back().edge_indices > subset)
-        return vec.end();
-
-    typename V::size_type step;
-    auto first = vec.begin();
-    decltype(first) it;
-    while(count>0){
-        step = count/2;
-        it = first + step;
-        if(it->edge_indices <= subset){
-            count = step;
-        }else{
-            first = ++it;
-            count -= step+1;
-        }
-    }
-    return first;
+    return yuki::first_equiv_greater(vec.begin(),vec.end(),subset,[](const auto& entry){return entry.edge_indices;},yuki::Greater<uint_least64_t>{});
 }
 
 template<typename V>
@@ -893,7 +878,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
                 for(uint_least64_t added=1ULL<<std::countr_zero(stem); added>1;){
                     added>>=1;
                     cc_temp = ue.cc + (*(edge_views_acc_impl[suffix_index(total_edges_acc_impl,added)].cc));
-                    if(!cc_temp.is_complete())
+                    if(!is_complete(cc_temp))
                         unions.emplace_back(stem+added,std::move(cc_temp));
                 }
             }
@@ -907,7 +892,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
                 uint_least64_t added = stem>>1;
                 for(unsigned j=i+1; added!=0; added>>=1,++j){
                     cc_temp = (*(edge_views_acc_impl[i].cc))+(*(edge_views_acc_impl[j].cc));
-                    if(!cc_temp.is_complete())
+                    if(!is_complete(cc_temp))
                         unionss[0].emplace_back(stem+added,std::move(cc_temp));
                 }
             }
@@ -949,7 +934,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
                     for(uint_least64_t added=1ULL<<std::countr_zero(stem); added>1;){
                         added>>=1;
                         cc_temp = ue.cc + (*(edge_views_acc_impl[suffix_index(total_edges_acc_impl,added)].cc));
-                        if(!cc_temp.is_complete()){
+                        if(!is_complete(cc_temp)){
                             if(total_unions<YUKI_LEX_ACCUMULATE_MAX_UNIONS){
                                 unions.emplace_back(stem+added,std::move(cc_temp));
                                 ++total_unions;
@@ -1028,7 +1013,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
             for(uint_least64_t added=1ULL<<std::countr_zero(stem); added>1;){
                 added>>=1;
                 cc_temp = ue.cc + (*(edge_views[suffix_index(total_edges,added)].cc));
-                if(!cc_temp.is_complete()){
+                if(!is_complete(cc_temp)){
                     if(total_unions<YUKI_LEX_ACCUMULATE_MAX_UNIONS){
                         unions.emplace_back(stem+added,std::move(cc_temp));
                         ++total_unions;
@@ -1080,7 +1065,7 @@ accumulate_ret_t accumulate_simple(const FSM_Edge_View* const edge_views,const u
         uint_least64_t added = stem0>>1;
         for(unsigned j=i+1; added!=0; added>>=1,++j){
             cc_temp = (*(edge_views[i].cc))+(*(edge_views[j].cc));
-            if(!cc_temp.is_complete())
+            if(!is_complete(cc_temp))
                 unionss[0].emplace_back(stem0+added,std::move(cc_temp));
         }
     }
@@ -1118,7 +1103,7 @@ accumulate_ret_t accumulate_simple(const FSM_Edge_View* const edge_views,const u
             for(uint_least64_t added=1ULL<<std::countr_zero(stem); added>1;){
                 added>>=1;
                 cc_temp = ue.cc + (*(edge_views[suffix_index(total_edges,added)].cc));
-                if(!cc_temp.is_complete()){
+                if(!is_complete(cc_temp)){
                     if(total_unions<YUKI_LEX_ACCUMULATE_MAX_UNIONS){
                         unions.emplace_back(stem+added,std::move(cc_temp));
                         ++total_unions;
@@ -1151,7 +1136,7 @@ accumulate_ret_t accumulate_simple(const FSM_Edge_View* const edge_views,const u
         for(uint_least64_t added=1ULL<<std::countr_zero(stem); added>1;){
             added>>=1;
             cc_temp = ue.cc + (*(edge_views[suffix_index(total_edges,added)].cc));
-            if(!cc_temp.is_complete())
+            if(!is_complete(cc_temp))
                 unions.emplace_back(stem+added,std::move(cc_temp));
         }
     }
@@ -1468,7 +1453,7 @@ void policy_edge_i(const size_t fsms_size,const unsigned height_i,const unsigned
     /// @pre `h_probe>=height_u`.
     /// @note `h_probe` is one tier higher than the actually probed tier, in case `height_u==0`.
     /// @return If `unionss[h_probe-1]` contains an entry corresponding to `n_probe`, its char class will be returned. Otherwise a new entry will be inserted with its char class calculated and returned. Note: `edge_views` will play the role as the nonexistent `unionss[-1]`.
-    auto probe_cc = [height_u,total_edges](unsigned h_probe,uint_least64_t n_probe) -> const Char_Class& {
+    auto probe_cc = [height_u,total_edges](unsigned h_probe,uint_least64_t n_probe) -> const yuki::IntegralCIs_OV<char32_t>& {
         assert(h_probe>=height_u);
         #ifndef NDEBUG
         const unsigned h_probe_orig = h_probe; // For assertion.
@@ -1496,7 +1481,7 @@ void policy_edge_i(const size_t fsms_size,const unsigned height_i,const unsigned
             if(i_probe==unionss[height_u-1].end()){
                 for(;!probe_stack.empty();++h_probe){
                     const auto top = probe_stack.pop();
-                    i_probe = unionss[h_probe].emplace(top.insertion_locus,top.edge_indices,cc_all);
+                    i_probe = unionss[h_probe].emplace(top.insertion_locus,top.edge_indices,yuki::CInterval<char32_t>{0,yuki::UNICODE_MAX_32});
                 }
                 assert(h_probe==h_probe_orig);
                 return i_probe->cc;
@@ -1557,7 +1542,7 @@ void policy_edge_i(const size_t fsms_size,const unsigned height_i,const unsigned
             if(last_probed==unionss[height_u-1].end()){
                 for(;!probe_stack.empty();++h_probe){
                     const auto top = probe_stack.pop();
-                    unionss[h_probe].emplace_back(top.edge_indices,cc_all);
+                    unionss[h_probe].emplace_back(top.edge_indices,yuki::CInterval<char32_t>{0,yuki::UNICODE_MAX_32});
                 }
                 goto probe_done;
             }else if(!probe_stack.empty()){
@@ -1833,7 +1818,7 @@ void policy_edge_u(const size_t fsms_size,const unsigned height_i,const unsigned
             goto unwind_cc_simple;
         // `n_probe` is useless afterwards.
         unwind_cc:
-        // At this time, `i_probe` points to the last probed `Char_Class` and `h_probe` represents its height (>=`height_i-1`).
+        // At this time, `i_probe` points to the last probed `yuki::IntegralCIs_OV<char32_t>` and `h_probe` represents its height (>=`height_i-1`).
         while(!probe_stack.empty() && !i_probe->cc.empty()){
             assert(i_probe->state_cached);
             const auto top = probe_stack.pop();
@@ -1846,7 +1831,7 @@ void policy_edge_u(const size_t fsms_size,const unsigned height_i,const unsigned
             i_probe=inserted;
         }
         unwind_cc_simple:
-        // When an empty `Char_Class` is encountered.
+        // When an empty `yuki::IntegralCIs_OV<char32_t>` is encountered.
         while(!probe_stack.empty()){
             const auto top = probe_stack.pop();
             i_probe = intersectionss[++h_probe].emplace(top.insertion_locus,top.edge_indices);
@@ -1932,7 +1917,7 @@ void policy_char(const size_t fsms_size){
     YUKI_LEX_META_DBGO("S{} policy_char\n",worklist.front()->mapped);
 
     const auto e = edge_views.cend();
-    for(Char_Class::const_char_iterator i_c32=cc_union.begin_char();!i_c32.is_end();++i_c32){
+    for(yuki::IntegralCIs_OV<char32_t>::const_number_iterator i_c32=cc_union.begin_number();!i_c32.is_end();++i_c32){
         assert(next_always_resized.empty());
 
         const char32_t c32 = *i_c32;
@@ -2120,7 +2105,7 @@ void write_fsm_code(
                         edge_views_branch_indices.emplace_back(edge_views.size());
                     }
                     for(const FSM_Edge& e : edges){
-                        edges_has_complete |= e.cc.is_complete();
+                        edges_has_complete |= is_complete(e.cc);
                         edge_views.emplace_back(current_branch_num,is_head,&e.cc,e.node);
                         total_intervals += e.cc.size();
                     }
@@ -2271,7 +2256,7 @@ void write_fsm_code(
                 YUKI_LEX_META_DBGO("S{} policy_edge_2\n",worklist.front()->mapped);
                 const FSM_Edge_View edge_view0 = edge_views[0];
                 const FSM_Edge_View edge_view1 = edge_views[1];
-                Char_Class cc = (*edge_view0.cc) - (*edge_view1.cc);
+                yuki::IntegralCIs_OV<char32_t> cc = (*edge_view0.cc) - (*edge_view1.cc);
                 if(!cc.empty()){
                     assert(next_always_resized.empty());
                     insert_node_to(next_always_resized,edge_view0);
@@ -2313,15 +2298,15 @@ void write_fsm_code(
                 }
                 #endif
                 if(edges_has_complete)
-                    cc_union.make_complete();
+                    cc_union = yuki::CInterval<char32_t>(0,yuki::UNICODE_MAX_32);
                 else{
                     struct const_cc_iterator{
                         decltype(edge_views.cbegin()) i;
                         const_cc_iterator& operator++() {++i;return *this;}
-                        const Char_Class* operator->() const {return i->cc;}
-                        const Char_Class& operator*() const {return *(i->cc);}
+                        const yuki::IntegralCIs_OV<char32_t>* operator->() const {return i->cc;}
+                        const yuki::IntegralCIs_OV<char32_t>& operator*() const {return *(i->cc);}
                     };
-                    cc_union.merge_cc(const_cc_iterator{edge_views.cbegin()},edge_views.size());
+                    cc_union.clear_and_merge(const_cc_iterator{edge_views.cbegin()},edge_views.size(),is_complete);
                 }
 
                 #ifndef YUKI_LEX_POLICY_CHAR_MAX_CHAR_COUNT
@@ -2329,7 +2314,7 @@ void write_fsm_code(
                 #endif
 
                 #ifndef YUKI_LEX_META_DBG
-                if(cc_union.char_count()<=YUKI_LEX_POLICY_CHAR_MAX_CHAR_COUNT || edge_views.size()>64 || !policy_edge(fsms_size))
+                if(cc_union.total_numbers()<=YUKI_LEX_POLICY_CHAR_MAX_CHAR_COUNT || edge_views.size()>64 || !policy_edge(fsms_size))
                 #else
                 const size_t total_chars = cc_union.char_count();
                 YUKI_LEX_META_DBGO("S{} edges {} chars {}\n",worklist.front()->mapped,edge_views.size(),total_chars);

@@ -2,15 +2,20 @@
 #include"gen/Meta_Lexer.h"
 #include"gen/Regex_Parser.h"
 #include<cstdlib>
-int main(int argc,char** argv){
-    namespace ylex=yuki::lex;
-    static ylex::Cmd_Data cmd_data;
-    yuki::Cmd_Lexer<ylex::Cmd_Data> cmd_lexer(std::move(ylex::opt_table));
-    cmd_lexer.process(cmd_data,argc,argv);
+#include"cmd.hpp"
+int main(const int argc,const char*const*const argv){
+    if(argc<=1){
+        yuki::lex::cmd_impl::version(stdout);
+        yuki::cmd_help(stdout,yuki::lex::coarr);
+        return EXIT_SUCCESS;
+    }
+    yuki::lex::Cmd_Data cmd_data;
+    if(yuki::Cmd_Option_Table<yuki::lex::coarr>{}.parse(cmd_data,argc,argv)!=0)
+        return EXIT_SUCCESS;
     if(!cmd_data.post_process())
         exit(EXIT_FAILURE);
 
-    ylex::Meta_Lexer meta_lexer(std::move(cmd_data));
+    yuki::lex::Meta_Lexer meta_lexer(std::move(cmd_data));
     meta_lexer.lex();
 
     if(meta_lexer.errors()!=0){
