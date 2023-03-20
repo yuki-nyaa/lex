@@ -842,8 +842,8 @@ static_assert(YUKI_LEX_ACCUMULATE_MAX_INTERSECTIONS>=64*63/2);
 #define YUKI_LEX_ACCUMULATE_MAX_UNIONS 16384
 #endif
 static_assert(YUKI_LEX_ACCUMULATE_MAX_UNIONS>=64*63/2);
-#ifndef YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHHOLD
-#define YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHHOLD 7/8
+#ifndef YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHOLD
+#define YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHOLD 7/8
 #endif
 
 /// @note As should not be too hard to see, the returned value satisfies the various preconditions of the various `policy_edge` routines.
@@ -983,7 +983,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
     // Phase 2
     unsigned h = 1;
 
-    for(;h<(total_edges-2)*YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHHOLD;++h){
+    for(;h<(total_edges-2)*YUKI_LEX_ACCUMULATE_FORCE_IU_UPPER_THRESHOLD;++h){
         yuki::Vector<IEntry>& intersections = intersectionss[h];
         assert(intersections.empty());
         intersections.reserve(intersectionss[h-1].size()*(total_edges-h-1)/(h+2));
@@ -1025,7 +1025,7 @@ accumulate_ret_t accumulate(const FSM_Edge_View* const edge_views,const unsigned
 
         if(unions.empty())
             return acc_impl.make_intersections_until_max(h+1,h,total_intersections);
-    } // for(;h<(total_edges-2)*YUKI_LEX_ACCUMULATE_FORCE_IU_THRESHHOLD;++h)
+    } // for(;h<(total_edges-2)*YUKI_LEX_ACCUMULATE_FORCE_IU_THRESHOLD;++h)
 
     // Phase 3
     unsigned hi=h,hu=h;
