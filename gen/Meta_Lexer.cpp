@@ -2299,7 +2299,7 @@ case State::INITIAL:{
         } // if(!in.getable()) else
         break;
     } // case 0
-    case 1:{ // \%namespace\u{Space}*
+    case 1:{ // \%namespace\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2307,8 +2307,8 @@ state=State::O_NSPACE;
         }
         in.clear_matched();
         break;
-    } // case 1 // \%namespace\u{Space}*
-    case 2:{ // \%lexer\u{Space}*
+    } // case 1 // \%namespace\u{WSpace}*
+    case 2:{ // \%lexer\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2316,8 +2316,8 @@ state=State::O_LEXER;
         }
         in.clear_matched();
         break;
-    } // case 2 // \%lexer\u{Space}*
-    case 3:{ // \%input[_\-]class\u{Space}*
+    } // case 2 // \%lexer\u{WSpace}*
+    case 3:{ // \%input[_\-]class\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=3 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2325,8 +2325,8 @@ state=State::O_ICLASS;
         }
         in.clear_matched();
         break;
-    } // case 3 // \%input[_\-]class\u{Space}*
-    case 4:{ // \%input[_\-]header\u{Space}*
+    } // case 3 // \%input[_\-]class\u{WSpace}*
+    case 4:{ // \%input[_\-]header\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=4 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2334,8 +2334,8 @@ state=State::O_IHEADER;
         }
         in.clear_matched();
         break;
-    } // case 4 // \%input[_\-]header\u{Space}*
-    case 5:{ // \%debug[_\-]prefix\u{Space}*
+    } // case 4 // \%input[_\-]header\u{WSpace}*
+    case 5:{ // \%debug[_\-]prefix\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=5 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2343,8 +2343,8 @@ state=State::O_DPREFIX;
         }
         in.clear_matched();
         break;
-    } // case 5 // \%debug[_\-]prefix\u{Space}*
-    case 6:{ // \%fsm[_\-]codes[_\-]namespace\u{Space}*
+    } // case 5 // \%debug[_\-]prefix\u{WSpace}*
+    case 6:{ // \%fsm[_\-]codes[_\-]namespace\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=6 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2352,8 +2352,8 @@ state=State::O_FCNSPACE;
         }
         in.clear_matched();
         break;
-    } // case 6 // \%fsm[_\-]codes[_\-]namespace\u{Space}*
-    case 7:{ // \%token[_\-]type\u{Space}*
+    } // case 6 // \%fsm[_\-]codes[_\-]namespace\u{WSpace}*
+    case 7:{ // \%token[_\-]type\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=7 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2361,8 +2361,8 @@ state=State::O_TTYPE;
         }
         in.clear_matched();
         break;
-    } // case 7 // \%token[_\-]type\u{Space}*
-    case 8:{ // \%no[_\-]default[_\-]ctor\u{Space}*
+    } // case 7 // \%token[_\-]type\u{WSpace}*
+    case 8:{ // \%no[_\-]default[_\-]ctor\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=8 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2370,8 +2370,8 @@ no_default_ctor=true;
         }
         in.clear_matched();
         break;
-    } // case 8 // \%no[_\-]default[_\-]ctor\u{Space}*
-    case 9:{ // \%template\u{Space}*<.*
+    } // case 8 // \%no[_\-]default[_\-]ctor\u{WSpace}*
+    case 9:{ // \%template\u{WSpace}*<.*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=9 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2379,8 +2379,8 @@ matched.remove_prefix(1); template_decl=matched;
         }
         in.clear_matched();
         break;
-    } // case 9 // \%template\u{Space}*<.*
-    case 10:{ // \%templated[_\-]lexer\u{Space}*
+    } // case 9 // \%template\u{WSpace}*<.*
+    case 10:{ // \%templated[_\-]lexer\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=10 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2388,8 +2388,8 @@ state=State::O_TPLEXER;
         }
         in.clear_matched();
         break;
-    } // case 10 // \%templated[_\-]lexer\u{Space}*
-    case 11:{ // \%code\u{Space}*
+    } // case 10 // \%templated[_\-]lexer\u{WSpace}*
+    case 11:{ // \%code\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=11 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2397,7 +2397,7 @@ current_regex.clear(); state=State::CODE0;
         }
         in.clear_matched();
         break;
-    } // case 11 // \%code\u{Space}*
+    } // case 11 // \%code\u{WSpace}*
     case 12:{ // [a-zA-Z_][0-9a-zA-Z_]*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=12 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
@@ -2407,7 +2407,7 @@ current_regex=matched; state=State::MACRO_DEF_GOBBLE_SPACE;
         in.clear_matched();
         break;
     } // case 12 // [a-zA-Z_][0-9a-zA-Z_]*
-    case 13:{ // \%\%\u{Space}*
+    case 13:{ // \%\%\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=13 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2429,8 +2429,8 @@ if(debug_prefix.empty())
         }
         in.clear_matched();
         break;
-    } // case 13 // \%\%\u{Space}*
-    case 14:{ // \u{Space}+
+    } // case 13 // \%\%\u{WSpace}*
+    case 14:{ // \u{WSpace}+
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=14 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2438,7 +2438,7 @@ if(debug_prefix.empty())
         }
         in.clear_matched();
         break;
-    } // case 14 // \u{Space}+
+    } // case 14 // \u{WSpace}+
     case 15:{ // \/\/.*\R
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL cap=15 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
@@ -2674,7 +2674,7 @@ state=State::MACRO_DEF;
         } // if(!in.getable()) else
         break;
     } // case 0
-    case 1:{ // \u{Space}+
+    case 1:{ // \u{WSpace}+
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=MACRO_DEF_GOBBLE_SPACE cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2682,7 +2682,7 @@ state=State::MACRO_DEF;
         }
         in.clear_matched();
         break;
-    } // case 1 // \u{Space}+
+    } // case 1 // \u{WSpace}+
     } // switch(Meta_Lexer_fsm_codes::MACRO_DEF_GOBBLE_SPACE(in,heads))
     break;
 } // case State::MACRO_DEF_GOBBLE_SPACE
@@ -2733,7 +2733,7 @@ case State::CODE0:{
         } // if(!in.getable()) else
         break;
     } // case 0
-    case 1:{ // \u{Space}+
+    case 1:{ // \u{WSpace}+
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=CODE0 cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2741,7 +2741,7 @@ case State::CODE0:{
         }
         in.clear_matched();
         break;
-    } // case 1 // \u{Space}+
+    } // case 1 // \u{WSpace}+
     case 2:{ // \/\/.*\R
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=CODE0 cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
@@ -2962,7 +2962,7 @@ current_fsm_name=matched.substr(1,matched.size()-3);
         in.clear_matched();
         break;
     } // case 1 // <[^>]*>\{
-    case 2:{ // \%\%\u{Space}*
+    case 2:{ // \%\%\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=SEC1 cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2975,8 +2975,8 @@ if(!initial_encountered){
         }
         in.clear_matched();
         break;
-    } // case 2 // \%\%\u{Space}*
-    case 3:{ // \u{Space}+
+    } // case 2 // \%\%\u{WSpace}*
+    case 3:{ // \u{WSpace}+
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=SEC1 cap=3 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -2984,7 +2984,7 @@ if(!initial_encountered){
         }
         in.clear_matched();
         break;
-    } // case 3 // \u{Space}+
+    } // case 3 // \u{WSpace}+
     case 4:{ // \/\/.*\R
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=SEC1 cap=4 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
@@ -3038,7 +3038,7 @@ case State::REGEX:{
         } // if(!in.getable()) else
         break;
     } // case 0
-    case 1:{ // \u{Space}+\{\u{Space}*
+    case 1:{ // \u{WSpace}+\{\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3054,8 +3054,8 @@ rl.in.set_source(current_regex);
         }
         in.clear_matched();
         break;
-    } // case 1 // \u{Space}+\{\u{Space}*
-    case 2:{ // <<EOF>>\u{Space}+\{\u{Space}*
+    } // case 1 // \u{WSpace}+\{\u{WSpace}*
+    case 2:{ // <<EOF>>\u{WSpace}+\{\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3065,8 +3065,8 @@ brace_level=0;
         }
         in.clear_matched();
         break;
-    } // case 2 // <<EOF>>\u{Space}+\{\u{Space}*
-    case 3:{ // <<DEFAULT>>\u{Space}+\{\u{Space}*
+    } // case 2 // <<EOF>>\u{WSpace}+\{\u{WSpace}*
+    case 3:{ // <<DEFAULT>>\u{WSpace}+\{\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=3 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3076,8 +3076,8 @@ brace_level=0;
         }
         in.clear_matched();
         break;
-    } // case 3 // <<DEFAULT>>\u{Space}+\{\u{Space}*
-    case 4:{ // <<BEFORE>>\u{Space}+\{\u{Space}*
+    } // case 3 // <<DEFAULT>>\u{WSpace}+\{\u{WSpace}*
+    case 4:{ // <<BEFORE>>\u{WSpace}+\{\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=4 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3087,7 +3087,7 @@ brace_level=0;
         }
         in.clear_matched();
         break;
-    } // case 4 // <<BEFORE>>\u{Space}+\{\u{Space}*
+    } // case 4 // <<BEFORE>>\u{WSpace}+\{\u{WSpace}*
     case 5:{ // .
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=REGEX cap=5 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
@@ -3679,7 +3679,7 @@ state=State::REGEX;
         } // if(!in.getable()) else
         break;
     } // case 0
-    case 1:{ // \u{Space}*\}
+    case 1:{ // \u{WSpace}*\}
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=POST_REGEX cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3691,8 +3691,8 @@ if(rp.heads().size()>max_heads)
         }
         in.clear_matched();
         break;
-    } // case 1 // \u{Space}*\}
-    case 2:{ // \%\%\u{Space}*
+    } // case 1 // \u{WSpace}*\}
+    case 2:{ // \%\%\u{WSpace}*
         matched=in.matched(pos_begin);
         YUKI_LEX_Meta_Lexer_DBGO("State=POST_REGEX cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
@@ -3711,7 +3711,7 @@ fprintf(stderr,"Error: Missing closing brace for fsm \"%s\"!\n",current_fsm_name
         }
         in.clear_matched();
         break;
-    } // case 2 // \%\%\u{Space}*
+    } // case 2 // \%\%\u{WSpace}*
     } // switch(Meta_Lexer_fsm_codes::POST_REGEX(in,heads))
     break;
 } // case State::POST_REGEX

@@ -27,7 +27,7 @@ link_directories(/usr/local/lib)
 if(NOT YUKI_LEX_BUILD_WITH_PREGEN)
     set(CMAKE_CROSSCOMPILING TRUE)
 
-    add_custom_target(build-time-make-directory ALL
+    add_custom_target(build-time-make-directory
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/gen)
 
     add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.cpp ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.h ${PROJECT_SOURCE_DIR}/gen/Regex_Parser.token.hpp
@@ -48,7 +48,7 @@ if(NOT YUKI_LEX_BUILD_WITH_PREGEN)
 endif()
 
 add_executable(ylex main.cpp gen/Regex_Parser.cpp gen/Meta_Lexer.cpp write_fsm_code.cpp)
-target_link_libraries(ylex fmt)
+target_link_libraries(ylex fmt yuki_unicode)
 
 install(DIRECTORY include/yuki TYPE INCLUDE)
-install(TARGETS ylex RUNTIME)
+install(TARGETS ylex)

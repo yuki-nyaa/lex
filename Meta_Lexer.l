@@ -96,22 +96,22 @@ void write_fsm_code(
 
 %%
 <INITIAL>{
-\%namespace\u{Space}*    {state=State::O_NSPACE;}
-\%lexer\u{Space}*    {state=State::O_LEXER;}
-\%input[_\-]class\u{Space}*    {state=State::O_ICLASS;}
-\%input[_\-]header\u{Space}*    {state=State::O_IHEADER;}
-\%debug[_\-]prefix\u{Space}*    {state=State::O_DPREFIX;}
-\%fsm[_\-]codes[_\-]namespace\u{Space}*    {state=State::O_FCNSPACE;}
-\%token[_\-]type\u{Space}*    {state=State::O_TTYPE;}
-\%no[_\-]default[_\-]ctor\u{Space}*    {no_default_ctor=true;}
-\%template\u{Space}*<.*    {matched.remove_prefix(1); template_decl=matched;}
-\%templated[_\-]lexer\u{Space}*    {state=State::O_TPLEXER;}
+\%namespace\u{WSpace}*    {state=State::O_NSPACE;}
+\%lexer\u{WSpace}*    {state=State::O_LEXER;}
+\%input[_\-]class\u{WSpace}*    {state=State::O_ICLASS;}
+\%input[_\-]header\u{WSpace}*    {state=State::O_IHEADER;}
+\%debug[_\-]prefix\u{WSpace}*    {state=State::O_DPREFIX;}
+\%fsm[_\-]codes[_\-]namespace\u{WSpace}*    {state=State::O_FCNSPACE;}
+\%token[_\-]type\u{WSpace}*    {state=State::O_TTYPE;}
+\%no[_\-]default[_\-]ctor\u{WSpace}*    {no_default_ctor=true;}
+\%template\u{WSpace}*<.*    {matched.remove_prefix(1); template_decl=matched;}
+\%templated[_\-]lexer\u{WSpace}*    {state=State::O_TPLEXER;}
 
-\%code\u{Space}*    {current_regex.clear(); state=State::CODE0;}
+\%code\u{WSpace}*    {current_regex.clear(); state=State::CODE0;}
 
 [a-zA-Z_][0-9a-zA-Z_]*    {current_regex=matched; state=State::MACRO_DEF_GOBBLE_SPACE;}
 
-\%\%\u{Space}*    {
+\%\%\u{WSpace}*    {
     if(debug_prefix.empty())
         debug_prefix.append("YUKI_LEX_").append(lexer).append("_DBG");
     if(fsm_codes_nspace.empty())
@@ -129,7 +129,7 @@ void write_fsm_code(
     state=State::SEC1;
 }
 
-\u{Space}+    {}
+\u{WSpace}+    {}
 
 \/\/.*\R    {} // Comments.
 }
@@ -169,7 +169,7 @@ void write_fsm_code(
 
 
 <MACRO_DEF_GOBBLE_SPACE>{
-\u{Space}+    {}
+\u{WSpace}+    {}
 <<DEFAULT>>    {state=State::MACRO_DEF;}
 }
 
@@ -189,7 +189,7 @@ void write_fsm_code(
 
 
 <CODE0>{
-\u{Space}+    {}
+\u{WSpace}+    {}
 \/\/.*\R    {} // Comments.
 \{    {
     brace_level=0;
@@ -245,7 +245,7 @@ void write_fsm_code(
     state=State::GOBBLE_NEWLINE_TO_REGEX;
 }
 
-\%\%\u{Space}*    {
+\%\%\u{WSpace}*    {
     if(!initial_encountered){
         fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
         ++errors_;
@@ -254,7 +254,7 @@ void write_fsm_code(
     state=State::SEC2;
 }
 
-\u{Space}+    {}
+\u{WSpace}+    {}
 
 \/\/.*\R    {} // Comments.
 }
@@ -267,7 +267,7 @@ void write_fsm_code(
 
 
 <REGEX>{
-\u{Space}+\{\u{Space}*    {
+\u{WSpace}+\{\u{WSpace}*    {
     rl.in.set_source(current_regex);
     rp.parse();
     #ifndef YUKI_LEX_MAX_REGEX_PRINTABLE
@@ -278,17 +278,17 @@ void write_fsm_code(
     brace_level=0;
     state=State::REGEX_CODE;
 }
-<<EOF>>\u{Space}+\{\u{Space}*    {
+<<EOF>>\u{WSpace}+\{\u{WSpace}*    {
     brace_level=0;
     current_eof.clear();
     state=State::REGEX_CODE_EOF;
 }
-<<DEFAULT>>\u{Space}+\{\u{Space}*    {
+<<DEFAULT>>\u{WSpace}+\{\u{WSpace}*    {
     brace_level=0;
     current_default.clear();
     state=State::REGEX_CODE_DEFAULT;
 }
-<<BEFORE>>\u{Space}+\{\u{Space}*    {
+<<BEFORE>>\u{WSpace}+\{\u{WSpace}*    {
     brace_level=0;
     current_before.clear();
     state=State::REGEX_CODE_BEFORE;
@@ -415,7 +415,7 @@ void write_fsm_code(
 
 
 <POST_REGEX>{
-\u{Space}*\}    {
+\u{WSpace}*\}    {
     if(rp.heads().size()>max_heads)
         max_heads = rp.heads().size();
     write_fsm_code_wrapped();
@@ -423,7 +423,7 @@ void write_fsm_code(
     state=State::SEC1;
 }
 
-\%\%\u{Space}*    {
+\%\%\u{WSpace}*    {
     fprintf(stderr,"Error: Missing closing brace for fsm \"%s\"!\n",current_fsm_name.c_str());
     ++errors_;
     if(rp.heads().size()>max_heads)
