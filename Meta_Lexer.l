@@ -509,7 +509,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
     fprintf(cmd_data.fp_out_cpp,
         "#include<cstdlib>\n"
         "#include<yuki/lex/common.hpp>\n"
-        "#include<yuki/unicode.hpp>\n"
+        "#include<yuki/uchar.hpp>\n"
         "#include\"%s\"\n"
         "\n"
         "%s\n",

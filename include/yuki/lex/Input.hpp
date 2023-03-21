@@ -1,5 +1,5 @@
 #pragma once
-#include<yuki/unicode.hpp>
+#include<yuki/uchar.hpp>
 #include<cstdio>
 #include<cstring>
 #include<cassert>

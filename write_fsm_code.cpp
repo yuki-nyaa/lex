@@ -6,7 +6,7 @@
 #include<yuki/Set_OV.hpp>
 #include<yuki/Map.hpp>
 #include<yuki/print.hpp>
-#include<yuki/unicode.hpp>
+#include<yuki/uchar.hpp>
 #include"FSM.hpp"
 
 #define HIND YUKI_LEX_HIND

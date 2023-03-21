@@ -2,7 +2,7 @@
 #include"cconfig"
 #include<cstdlib>
 #include<yuki/lex/common.hpp>
-#include<yuki/unicode.hpp>
+#include<yuki/uchar.hpp>
 #include"gen/Meta_Lexer.h"
 
 namespace yuki::lex{
@@ -3809,7 +3809,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
     fprintf(cmd_data.fp_out_cpp,
         "#include<cstdlib>\n"
         "#include<yuki/lex/common.hpp>\n"
-        "#include<yuki/unicode.hpp>\n"
+        "#include<yuki/uchar.hpp>\n"
         "#include\"%s\"\n"
         "\n"
         "%s\n",

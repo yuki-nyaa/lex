@@ -2,7 +2,7 @@
     #include"cconfig"
 #include<cstdlib>
 #include<yuki/lex/common.hpp>
-#include<yuki/unicode.hpp>
+#include<yuki/uchar.hpp>
 #include"sample.h"
 
 namespace xxx{
