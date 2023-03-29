@@ -1,8 +1,8 @@
 #pragma once
 
-#include<unordered_map>
 #include<string>
 #include<yuki/Vector.hpp>
+#include<yuki/unordered_map_str.hpp>
 #include"cmd.hpp"
 #include"Regex_Lexer.hpp"
 #include"gen/Regex_Parser.h"
@@ -147,7 +147,7 @@ struct Meta_Lexer{
     std::string nspace_head;
     std::string nspace_tail;
 
-    std::unordered_map<std::string,std::string> code_htable;
+    yuki::unordered_map_str<std::string,std::string> code_htable;
 
     size_t max_heads=0;
 

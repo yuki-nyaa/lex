@@ -2706,7 +2706,7 @@ case State::MACRO_DEF:{
         {
 str_temp.assign("(");
     str_temp.append(matched).push_back(')');
-    const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = rl.macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
+    const std::pair<yuki::unordered_map_str<std::string,std::string>::iterator,bool> emplace_ret = rl.macro_table.try_emplace(std::move(current_regex),std::move(str_temp));
     if(!emplace_ret.second){
         fprintf(stderr,"Error: Multiple definition of macro \"%s\"!\n",emplace_ret.first->first.c_str());
         ++errors_;
@@ -2805,8 +2805,8 @@ if(brace_level!=0){
         --brace_level;
         str_temp.push_back('}');
     }else{
-        yuki::trim_trailing_spaces(str_temp);
-        const std::pair<std::unordered_map<std::string,std::string>::iterator,bool> emplace_ret = code_htable.try_emplace(std::move(current_regex),std::move(str_temp));
+        str_temp.resize(yuki::remove_trailing(str_temp.begin(),str_temp.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
+        const std::pair<yuki::unordered_map_str<std::string,std::string>::iterator,bool> emplace_ret = code_htable.try_emplace(std::move(current_regex),std::move(str_temp));
         if(!emplace_ret.second){
             fprintf(stderr,"Error: Multiple definition of code section \"%s\"!\n",emplace_ret.first->first.c_str());
             ++errors_;
@@ -3131,8 +3131,8 @@ if(brace_level!=0){
         --brace_level;
         str_temp.push_back('}');
     }else{
-        yuki::trim_trailing_spaces(str_temp);
-        yuki::trim_trailing_spaces(current_regex);
+        str_temp.resize(yuki::remove_trailing(str_temp.begin(),str_temp.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
+        current_regex.resize(yuki::remove_trailing(current_regex.begin(),current_regex.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
         current_regex_codes.emplace_back(std::move(current_regex),std::move(str_temp));
         state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
@@ -3227,7 +3227,7 @@ if(brace_level!=0){
         --brace_level;
         current_eof.push_back('}');
     }else{
-        yuki::trim_trailing_spaces(current_eof);
+        current_eof.resize(yuki::remove_trailing(current_eof.begin(),current_eof.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
         state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
         }
@@ -3383,7 +3383,7 @@ if(brace_level!=0){
         --brace_level;
         current_default.push_back('}');
     }else{
-        yuki::trim_trailing_spaces(current_default);
+        current_default.resize(yuki::remove_trailing(current_default.begin(),current_default.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
         state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
         }
@@ -3539,7 +3539,7 @@ if(brace_level!=0){
         --brace_level;
         current_before.push_back('}');
     }else{
-        yuki::trim_trailing_spaces(current_before);
+        current_before.resize(yuki::remove_trailing(current_before.begin(),current_before.end(),[](const char c){return isspace(static_cast<unsigned char>(c));}));
         state=State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX;
     }
         }
@@ -3903,12 +3903,12 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
     );
 
     str_temp.clear(); // Used for `State` names.
-    const std::unordered_map<std::string,std::string>::const_iterator code_htable_end = code_htable.end();
-    const std::unordered_map<std::string,std::string>::const_iterator eof_global_i = code_htable.find("eof");
+    const yuki::unordered_map_str<std::string,std::string>::const_iterator code_htable_end = code_htable.end();
+    const yuki::unordered_map_str<std::string,std::string>::const_iterator eof_global_i = code_htable.find("eof");
     const bool eof_global = eof_global_i!=code_htable_end;
-    const std::unordered_map<std::string,std::string>::const_iterator default_global_i = code_htable.find("default");
+    const yuki::unordered_map_str<std::string,std::string>::const_iterator default_global_i = code_htable.find("default");
     const bool default_global = default_global_i!=code_htable_end;
-    const std::unordered_map<std::string,std::string>::const_iterator before_global_i = code_htable.find("before");
+    const yuki::unordered_map_str<std::string,std::string>::const_iterator before_global_i = code_htable.find("before");
     const bool before_global = before_global_i!=code_htable_end;
 
     for(const Named_Regex_Codes& nrc : named_regex_codes){

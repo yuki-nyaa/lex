@@ -3,10 +3,9 @@
 #include"include/yuki/lex/get_u8.hpp"
 #include"gen/Regex_Parser.token.hpp"
 #include<cstdlib>
-#include<unordered_map>
-#include<yuki/CHashTable.hpp>
-#include<yuki/mmhash3.hpp>
+#include<yuki/CHashTable_Str.hpp>
 #include<yuki/Interval.hpp>
+#include<yuki/unordered_map_str.hpp>
 #include<yuki/unicode/general_category.h>
 #include<yuki/unicode/scripts.h>
 #include<yuki/unicode/blocks.hpp>
@@ -14,23 +13,7 @@
 
 namespace yuki::lex{
 
-struct MMHash3_SV{
-    constexpr size_t operator()(const std::string_view sv) const {return yuki::mmhash3(sv.data(),sv.size());}
-};
-
-template<size_t slots>
-using cc_table_t =
-    yuki::CHashTable<
-        std::string_view,
-        yuki::unicode::Name_CC,
-        yuki::unicode::Name_CC::Name,
-        MMHash3_SV,
-        yuki::Equal_To<std::string_view>,
-        yuki::unicode::Name_CC::Nil,
-        slots
-    >;
-
-inline constexpr cc_table_t<64> posix_cc_table = {
+inline constexpr yuki::CHashTable_Str<yuki::unicode::Name_CC,yuki::unicode::Name_CC::Name,yuki::unicode::Name_CC::Nil,64> posix_cc_table = {
     {"ASCII",yuki::cc_ascii},
     {"Space",yuki::cc_space},
     {"XDigit",yuki::cc_xdigit},
@@ -50,21 +33,21 @@ inline constexpr cc_table_t<64> posix_cc_table = {
     {"Byte",yuki::cc_all_byte},
 };
 
-inline constexpr struct Unicode_CC_Table : private cc_table_t<4096> {
-    typedef cc_table_t<4096> CHT;
+inline constexpr struct Unicode_CC_Table : private yuki::CHashTable_Str<yuki::unicode::Name_CC,yuki::unicode::Name_CC::Name,yuki::unicode::Name_CC::Nil,4096> {
+    typedef yuki::CHashTable_Str<yuki::unicode::Name_CC,yuki::unicode::Name_CC::Name,yuki::unicode::Name_CC::Nil,4096> CHT;
 
     constexpr Unicode_CC_Table() noexcept :
         CHT{{"All",yuki::unicode::All}}
     {
         using namespace yuki::unicode;
         for(const Name_CC_Num<GCategory> nccn : gcategory_table)
-            CHT::insert(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
+            CHT::emplace(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
         for(const Name_CC_Num<Script> nccn : script_table)
-            CHT::insert(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
+            CHT::emplace(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
         for(const Name_CC_Num<Block> nccn : block_table)
-            CHT::insert(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
+            CHT::emplace(Name_CC(nccn.name,nccn.cc,nccn.cc_size));
         for(const Name_CC ncc : bproperty_table)
-            CHT::insert(ncc);
+            CHT::emplace(ncc);
     }
 
     using CHT::find;
@@ -76,7 +59,7 @@ inline constexpr struct Unicode_CC_Table : private cc_table_t<4096> {
 
 struct Regex_Lexer{
 SV_Input in;
-std::unordered_map<std::string,std::string> macro_table;
+yuki::unordered_map_str<std::string,std::string> macro_table;
 yuki::Vector<std::string_view> macro_stack;
 unsigned& errors;
 
@@ -88,7 +71,7 @@ yuki::lex::Regex_Parser_TS::Token_t lex(){
     typedef Regex_Parser_TS::Token_t Token_t;
 
     yuki::U8Char u8c;
-    next_char:
+  next_char:
     u8c=get_u8(in);
     switch(u8c.raw()){
         case U'('_u8.raw():
