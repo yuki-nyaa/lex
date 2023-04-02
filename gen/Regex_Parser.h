@@ -1,5 +1,4 @@
 #pragma once
-
 #include<yuki/Vector.hpp>
 #include"Regex_Lexer.hpp"
 #ifndef YUKI_LEX_FSM_FACTORY_POOL_BLOCK
@@ -34,8 +33,7 @@ struct Regex_Parser final : yuki::pg::AbsLR1Parser<Regex_Parser_TS>, private Reg
 
     virtual int parse() override final {assert(lexer); return parse(*lexer);}
 
-
-  private:
+private:
     FSM_Factory<Node_Pool<FSM_Node,YUKI_LEX_FSM_FACTORY_POOL_BLOCK>> ff;
     size_t branch=0;
     unsigned& errors;
@@ -65,3 +63,4 @@ struct Regex_Parser final : yuki::pg::AbsLR1Parser<Regex_Parser_TS>, private Reg
 
 }; // struct Regex_Parser
 } // namespace yuki::lex
+

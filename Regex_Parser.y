@@ -1,25 +1,25 @@
-%nterm Regex {FSM:;};
-%nterm Char_Class {yuki::IntegralCIs_OV<char32_t>:;};
-%nterm Char_Interval {yuki::CInterval<char32_t>:;};
-%nterm Char_Intervals {yuki::IntegralCIs_OV<char32_t>:;};
-%term amount {Amount:;};
-%term character {char32_t:;};
-%term meta_char {int:;};
-%term basic_char_class {yuki::IntegralCIs_OV<char32_t>:;};
-%term paren_l "(" {};
-%term paren_r ")" {};
-%term sqparen_l "[" {};
-%term sqparen_r "]" {};
-%term ast "*" {};
-%term plus "+" {};
-%term qmark "?" {};
-%term qe "?=" {};
-%term lazy "?l:" {};
-%term dlazy "?d:" {};
-%term vbar "|" {};
-%term hat "^" {};
-%term to "-" {};
-%term esc_N {};
+%nterm Regex {FSM:;}
+%nterm Char_Class {yuki::IntegralCIs_OV<char32_t>:;}
+%nterm Char_Interval {yuki::CInterval<char32_t>:;}
+%nterm Char_Intervals {yuki::IntegralCIs_OV<char32_t>:;}
+%term amount {Amount:;}
+%term character {char32_t:;}
+%term meta_char {int:;}
+%term basic_char_class {yuki::IntegralCIs_OV<char32_t>:;}
+%term paren_l "("
+%term paren_r ")"
+%term sqparen_l "["
+%term sqparen_r "]"
+%term ast "*"
+%term plus "+"
+%term qmark "?"
+%term qe "?="
+%term lazy "?l:"
+%term dlazy "?d:"
+%term vbar "|"
+%term hat "^"
+%term to "-"
+%term esc_N
 
 %default_left
 %right amount "*" "+" "?"

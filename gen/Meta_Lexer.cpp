@@ -1,5 +1,6 @@
 
 #include"cconfig"
+#include<yuki/algorithm.hpp>
 #include<cstdlib>
 #include<yuki/lex/common.hpp>
 #include<yuki/uchar.hpp>

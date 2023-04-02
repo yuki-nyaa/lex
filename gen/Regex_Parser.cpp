@@ -1,4 +1,3 @@
-
 #include"cconfig"
 #include<yuki/print.hpp>
 #include<yuki/pg/lr1.hpp>
@@ -1438,9 +1437,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 11:{ // Regex -> Char_Class
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},ff.make_fsm(branch,std::move(token0_)));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1454,9 +1453,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 12:{ // Regex -> character
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                char32_t& token0_ = stack_[start_+0].token.get<2>();
+                char32_t& token0_ = stack_[start_+0].token.get<5>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},ff.make_fsm(branch,yuki::CInterval<char32_t>{token0_,token0_}));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1470,9 +1469,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 13:{ // Regex -> meta_char
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                int& token0_ = stack_[start_+0].token.get<1>();
+                int& token0_ = stack_[start_+0].token.get<6>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},ff.make_fsm(branch,token0_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1487,7 +1486,7 @@ int Regex_Parser::parse(Regex_Lexer& l_){
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},ff.make_fsm(branch,MetaChar::BOL));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1502,7 +1501,7 @@ int Regex_Parser::parse(Regex_Lexer& l_){
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},ff.make_esc_N(branch));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1516,10 +1515,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 1:{ // Regex -> Regex Regex
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
-                FSM& token1_ = stack_[start_+1].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
+                FSM& token1_ = stack_[start_+1].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},ff.make_seq(token0_,token1_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1533,9 +1532,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 4:{ // Regex -> Regex "*"
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},ff.make_ast(branch,token0_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1549,9 +1548,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 5:{ // Regex -> Regex "+"
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},ff.make_plus(branch,token0_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1565,9 +1564,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 6:{ // Regex -> Regex "?"
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},ff.make_qmark(branch,token0_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1581,10 +1580,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 7:{ // Regex -> Regex amount
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
-                Amount& token1_ = stack_[start_+1].token.get<3>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
+                Amount& token1_ = stack_[start_+1].token.get<4>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},ff.make_amount(branch,token0_,token1_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1598,10 +1597,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 2:{ // Regex -> Regex "|" Regex
                 assert(stack_.size()>=3);
                 const size_t start_ = stack_.size()-3;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
-                FSM& token2_ = stack_[start_+2].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
+                FSM& token2_ = stack_[start_+2].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+2].token.location_range().end},ff.make_alt(branch,token0_,token2_));
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1615,9 +1614,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 3:{ // Regex -> "(" Regex ")"
                 assert(stack_.size()>=3);
                 const size_t start_ = stack_.size()-3;
-                FSM& token1_ = stack_[start_+1].token.get<6>();
+                FSM& token1_ = stack_[start_+1].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+2].token.location_range().end},token1_);
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1631,9 +1630,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 8:{ // Regex -> "(" "?=" Regex ")"
                 assert(stack_.size()>=4);
                 const size_t start_ = stack_.size()-4;
-                FSM& token2_ = stack_[start_+2].token.get<6>();
+                FSM& token2_ = stack_[start_+2].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+3].token.location_range().end},token2_.make_head());
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
             if(!heads_.empty() && heads_.back()==branch){
@@ -1652,9 +1651,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 9:{ // Regex -> "(" "?l:" Regex ")"
                 assert(stack_.size()>=4);
                 const size_t start_ = stack_.size()-4;
-                FSM& token2_ = stack_[start_+2].token.get<6>();
+                FSM& token2_ = stack_[start_+2].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+3].token.location_range().end},token2_.make_lazy());
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1668,9 +1667,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 10:{ // Regex -> "(" "?d:" Regex ")"
                 assert(stack_.size()>=4);
                 const size_t start_ = stack_.size()-4;
-                FSM& token2_ = stack_[start_+2].token.get<6>();
+                FSM& token2_ = stack_[start_+2].token.get<1>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Regex>,{stack_[start_].token.location_range().begin,stack_[start_+3].token.location_range().end},token2_.make_dlazy());
-                FSM& token_target_ = token_target_complete_.get<6>();
+                FSM& token_target_ = token_target_complete_.get<1>();
 
                 {
                 }
@@ -1684,9 +1683,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 23:{ // Char_Class -> basic_char_class
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},std::move(token0_));
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1700,9 +1699,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 16:{ // Char_Class -> "[" Char_Interval "]"
                 assert(stack_.size()>=3);
                 const size_t start_ = stack_.size()-3;
-                yuki::CInterval<char32_t>& token1_ = stack_[start_+1].token.get<4>();
+                yuki::CInterval<char32_t>& token1_ = stack_[start_+1].token.get<3>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+2].token.location_range().end},token1_);
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1716,9 +1715,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 17:{ // Char_Class -> "[" Char_Intervals "]"
                 assert(stack_.size()>=3);
                 const size_t start_ = stack_.size()-3;
-                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+2].token.location_range().end},std::move(token1_));
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1732,9 +1731,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 20:{ // Char_Class -> "[" "^" Char_Class "]"
                 assert(stack_.size()>=4);
                 const size_t start_ = stack_.size()-4;
-                yuki::IntegralCIs_OV<char32_t>& token2_ = stack_[start_+2].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token2_ = stack_[start_+2].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+3].token.location_range().end},yuki::negate<{U'\0',yuki::UNICODE_MAX_32}>(token2_));
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1748,9 +1747,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 21:{ // Char_Class -> "[" "^" Char_Intervals "]"
                 assert(stack_.size()>=4);
                 const size_t start_ = stack_.size()-4;
-                yuki::IntegralCIs_OV<char32_t>& token2_ = stack_[start_+2].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token2_ = stack_[start_+2].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+3].token.location_range().end},yuki::negate<{U'\0',yuki::UNICODE_MAX_32}>(token2_));
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1764,10 +1763,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 18:{ // Char_Class -> "[" Char_Class "+" Char_Class "]"
                 assert(stack_.size()>=5);
                 const size_t start_ = stack_.size()-5;
-                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<5>();
-                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<2>();
+                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+4].token.location_range().end},token1_+token3_);
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1781,10 +1780,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 19:{ // Char_Class -> "[" Char_Class "*" Char_Class "]"
                 assert(stack_.size()>=5);
                 const size_t start_ = stack_.size()-5;
-                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<5>();
-                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<2>();
+                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+4].token.location_range().end},token1_*token3_);
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1798,10 +1797,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 22:{ // Char_Class -> "[" Char_Class "-" Char_Class "]"
                 assert(stack_.size()>=5);
                 const size_t start_ = stack_.size()-5;
-                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<5>();
-                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token1_ = stack_[start_+1].token.get<2>();
+                yuki::IntegralCIs_OV<char32_t>& token3_ = stack_[start_+3].token.get<2>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Class>,{stack_[start_].token.location_range().begin,stack_[start_+4].token.location_range().end},token1_-token3_);
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1815,9 +1814,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 27:{ // Char_Interval -> character
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                char32_t& token0_ = stack_[start_+0].token.get<2>();
+                char32_t& token0_ = stack_[start_+0].token.get<5>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Interval>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},token0_,token0_);
-                yuki::CInterval<char32_t>& token_target_ = token_target_complete_.get<4>();
+                yuki::CInterval<char32_t>& token_target_ = token_target_complete_.get<3>();
 
                 {
                 }
@@ -1831,10 +1830,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 26:{ // Char_Interval -> character "-" character
                 assert(stack_.size()>=3);
                 const size_t start_ = stack_.size()-3;
-                char32_t& token0_ = stack_[start_+0].token.get<2>();
-                char32_t& token2_ = stack_[start_+2].token.get<2>();
+                char32_t& token0_ = stack_[start_+0].token.get<5>();
+                char32_t& token2_ = stack_[start_+2].token.get<5>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Interval>,{stack_[start_].token.location_range().begin,stack_[start_+2].token.location_range().end},token0_,token2_);
-                yuki::CInterval<char32_t>& token_target_ = token_target_complete_.get<4>();
+                yuki::CInterval<char32_t>& token_target_ = token_target_complete_.get<3>();
 
                 {
                 }
@@ -1848,9 +1847,9 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 25:{ // Char_Intervals -> Char_Interval
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                yuki::CInterval<char32_t>& token0_ = stack_[start_+0].token.get<4>();
+                yuki::CInterval<char32_t>& token0_ = stack_[start_+0].token.get<3>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Intervals>,{stack_[start_].token.location_range().begin,stack_[start_+0].token.location_range().end},token0_);
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1864,10 +1863,10 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 24:{ // Char_Intervals -> Char_Intervals Char_Interval
                 assert(stack_.size()>=2);
                 const size_t start_ = stack_.size()-2;
-                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<5>();
-                yuki::CInterval<char32_t>& token1_ = stack_[start_+1].token.get<4>();
+                yuki::IntegralCIs_OV<char32_t>& token0_ = stack_[start_+0].token.get<2>();
+                yuki::CInterval<char32_t>& token1_ = stack_[start_+1].token.get<3>();
                 Token_t token_target_complete_(yuki::pg::in_place_kind<Token_Kind::Char_Intervals>,{stack_[start_].token.location_range().begin,stack_[start_+1].token.location_range().end},std::move((token0_.insert(token1_),token0_)));
-                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<5>();
+                yuki::IntegralCIs_OV<char32_t>& token_target_ = token_target_complete_.get<2>();
 
                 {
                 }
@@ -1881,7 +1880,7 @@ int Regex_Parser::parse(Regex_Lexer& l_){
             case 0:{ // Goal_ -> Regex
                 assert(stack_.size()>=1);
                 const size_t start_ = stack_.size()-1;
-                FSM& token0_ = stack_[start_+0].token.get<6>();
+                FSM& token0_ = stack_[start_+0].token.get<1>();
                 {
             FSM fsm = token0_;
             fsm.make_accept();
@@ -1907,4 +1906,5 @@ int Regex_Parser::parse(Regex_Lexer& l_){
     } // while(true)
 } // int Regex_Parser::parse(Regex_Lexer&)
 } // namespace yuki::lex
+
 

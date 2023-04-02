@@ -1,5 +1,4 @@
 #pragma once
-
 #include"FSM.hpp"
 #include<cassert>
 #include<yuki/tmp.hpp>
@@ -39,16 +38,14 @@ struct Regex_Parser_TS{
         return kind-terminal_first;
     }
 
-    struct Token_Index_Table;
+    static constexpr Token_Kind_t token_index_table[23] = {
+        1, 2, 3, 2, 4, 5, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    }; // token_index_table
 
-    typedef yuki::pg::VToken<Token_Kind_t,Token_Index_Table,int,char32_t,Amount,yuki::CInterval<char32_t>,yuki::IntegralCIs_OV<char32_t>,FSM> Token_t;
+    typedef yuki::pg::VToken<Token_Kind_t,token_index_table
+        , FSM, yuki::IntegralCIs_OV<char32_t>, yuki::CInterval<char32_t>, Amount, char32_t, int
+    > Token_t;
     typedef void Token;
 }; // struct Regex_Parser_TS
-
-struct Regex_Parser_TS::Token_Index_Table{
-static constexpr Regex_Parser_TS::Token_Kind_t token_index_table[23] = {
-    6,5,4,5,3,2,1,5,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,
-}; // token_index_table
-}; // struct Regex_Parser_TS::Token_Index_Table
 } // namespace yuki::lex
+
