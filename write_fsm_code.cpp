@@ -411,7 +411,7 @@ struct Transition{
 
 struct Transition_Table{
   private:
-    typedef yuki::Basic_Ordered_Vector<size_t,Transition,Transition::Target,yuki::Less<size_t>,yuki::Allocator<Transition>,yuki::Default_EC<>> OV_;
+    typedef yuki::Basic_Ordered_Vector<size_t,Transition,Transition::Target> OV_;
     OV_ ov_;
   public:
     Transition_Table(yuki::reserve_tag_t,const size_t count) noexcept : ov_(yuki::reserve_tag,count) {}
@@ -421,7 +421,7 @@ struct Transition_Table{
     void clear() {ov_.clear();}
 
     void insert(const char32_t c,yuki::Pair<State::post_heads_type&&,const size_t> p){
-        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_sep<true>(p.first,p.first,CInterval<char32_t>{c,c},std::move(p.zeroth));
+        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at<true>(p.first,p.first,CInterval<char32_t>{c,c},std::move(p.zeroth));
         if(!ibp.has_inserted){
             using yuki::const_kast;
             const_kast(ibp.iterator)->cc.insert(c);
@@ -432,7 +432,7 @@ struct Transition_Table{
     template<typename CC,typename PH>
     void insert(CC&& cc,yuki::Pair<PH,const size_t> p){
         assert(!cc.empty());
-        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_sep<true>(p.first,p.first,std::forward<CC>(cc),std::forward<PH>(p.zeroth));
+        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at<true>(p.first,p.first,std::forward<CC>(cc),std::forward<PH>(p.zeroth));
         if(!ibp.has_inserted){
             using yuki::const_kast;
             const OV_::non_const_iterator it_nc = const_kast(ibp.iterator);
@@ -530,8 +530,11 @@ yuki::RingQueue<bool> is_headed{yuki::reserve_tag,YUKI_LEX_STATES_EXPECTED};
 yuki::IntegralCIs_OV<char32_t> cc_union{yuki::reserve_tag,YUKI_LEX_CC_UNION_RESERVE};
 yuki::IntegralCIs_OV<char32_t> cc_temp,cc_temp2,cc_temp3;
 
-yuki::Vector<FSM_Edge_View> edge_views{yuki::reserve_tag,YUKI_IntegralCIs_OV_CLEAR_AND_MERGE_RESERVE}; // The macro is defined in <yuki/Interval.hpp>.
-yuki::Vector<size_t> edge_views_branch_indices{yuki::reserve_tag,YUKI_IntegralCIs_OV_CLEAR_AND_MERGE_RESERVE}; // The macro is defined in <yuki/Interval.hpp>.
+#ifndef YUKI_LEX_EDGES_EXPECTED
+#define YUKI_LEX_EDGES_EXPECTED 64
+#endif
+yuki::Vector<FSM_Edge_View> edge_views{yuki::reserve_tag,YUKI_LEX_EDGES_EXPECTED}; // The macro is defined in <yuki/Interval.hpp>.
+yuki::Vector<size_t> edge_views_branch_indices{yuki::reserve_tag,YUKI_LEX_EDGES_EXPECTED}; // The macro is defined in <yuki/Interval.hpp>.
 
 yuki::IB_Pair<State_Set::const_iterator> insert_state(State_Set& ss,State&& s){
     State_Set::const_iterator feg = ss.first_equiv_greater(s);
@@ -540,7 +543,7 @@ yuki::IB_Pair<State_Set::const_iterator> insert_state(State_Set& ss,State&& s){
         if(state_equal(feg->key,s)){
             return {feg,false};
         }
-    return {ss.emplace_sep(s,std::move(s),ss.size()),true};
+    return {ss.emplace_at(s,std::move(s),ss.size()),true};
 }
 
 yuki::IB_Pair<State_Set::const_iterator> insert_state(State_Set& ss,const State& s){
@@ -550,7 +553,7 @@ yuki::IB_Pair<State_Set::const_iterator> insert_state(State_Set& ss,const State&
         if(state_equal(feg->key,s)){
             return {feg,false};
         }
-    return {ss.emplace_sep(s,s,ss.size()),true};
+    return {ss.emplace_at(s,s,ss.size()),true};
 }
 
 /// @note All `insert_to_ss` do NOT modify `state_ex.post_heads`.
