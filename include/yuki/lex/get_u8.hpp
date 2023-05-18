@@ -23,7 +23,7 @@ yuki::U8Char get_u8(I& input){
                 assert(read==3);
                 return yuki::U8Char(c,utf8_buf[0],utf8_buf[1],utf8_buf[2]);
             }
-            default: assert(false);
+            default: assert(false); std::unreachable();
         }
     }
     return yuki::EOF_U8;
@@ -40,7 +40,7 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
         case encoding::utf16be:{
             switch(input.read(utf8_buf,1,2)){
                 case 0: return yuki::EOF_U8;
-                case 1: assert(false);
+                case 1: assert(false); std::unreachable();
                 case 2:{
                     switch(yuki::u16_length_byte(utf8_buf[0])){
                         case 2: return to_u32<encoding::utf16be>(0,0,utf8_buf[0],utf8_buf[1]);
@@ -49,7 +49,7 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
                             assert(read1==2);
                             return to_u32<encoding::utf16be>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
                         }
-                        default: assert(false);
+                        default: assert(false); std::unreachable();
                     }
                 }
             }
@@ -58,7 +58,7 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
         case encoding::utf16le:{
             switch(input.read(utf8_buf,1,2)){
                 case 0: return yuki::EOF_U8;
-                case 1: assert(false);
+                case 1: assert(false); std::unreachable();
                 case 2:{
                     switch(yuki::u16_length_byte(utf8_buf[1])){
                         case 2: return to_u32<encoding::utf16le>(0,0,utf8_buf[0],utf8_buf[1]);
@@ -67,7 +67,7 @@ yuki::U8Char get_u8(I& input,const yuki::encoding enc,yuki::codepage_t* const cp
                             assert(read1==2);
                             return to_u32<encoding::utf16le>(utf8_buf[0],utf8_buf[1],utf8_buf[2],utf8_buf[3]);
                         }
-                        default: assert(false);
+                        default: assert(false); std::unreachable();
                     }
                 }
             }

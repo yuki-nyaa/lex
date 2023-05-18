@@ -208,7 +208,7 @@ struct FSM_Node{
     enum struct Kind : unsigned {DTA,DA,LTA,LA,TA,A,  H,N}; // Do not change the order!!
 
     struct Less_By_Number{
-        bool operator()(const FSM_Node* const lhs,const FSM_Node* const rhs) const {return lhs->number < rhs->number;}
+        static bool operator()(const FSM_Node* const lhs,const FSM_Node* const rhs) {return lhs->number < rhs->number;}
     };
 };
 
@@ -260,8 +260,10 @@ struct FSM_Factory : private A{
         return n;
     }
 
-    template<typename... CC_Args,typename=std::enable_if_t<std::is_constructible_v<yuki::IntegralCIs_OV<char32_t>,CC_Args&&...>>>
-    FSM make_fsm(const size_t branch,CC_Args&&... cc_args){
+    template<typename... CC_Args>
+    auto make_fsm(const size_t branch,CC_Args&&... cc_args)
+        -> std::enable_if_t<std::is_constructible_v<yuki::IntegralCIs_OV<char32_t>,CC_Args&&...>, FSM>
+    {
         FSM_Node* const start = A::allocate();
         FSM_Node* const accept = A::allocate();
         ::new(start) FSM_Node{branch,num_next++,{{std::forward<CC_Args>(cc_args)...},accept}};

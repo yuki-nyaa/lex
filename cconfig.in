@@ -17,14 +17,12 @@
     #endif
     }
     #define YUKI_LEX_META_DBGO(...) yuki::dbgout_base(YUKI_LEX_META_DBG_FP,"YUKI_LEX_META",__VA_ARGS__)
-    #undef NDEBUG
     #define DEBUG_REFLEX YUKI_LEX_META_REFLEX
     #define YUKI_PG_DBG
     #define YUKI_LEX_Regex_Lexer_DBG
     #define YUKI_LEX_Meta_Lexer_DBG
 #else
     #define YUKI_LEX_META_DBGO(...)
-    #define NDEBUG
     #undef DEBUG_REFLEX
     #undef YUKI_PG_DBG
     #undef YUKI_LEX_Regex_Lexer_DBG

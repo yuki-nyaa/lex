@@ -91,7 +91,7 @@ struct State{
         assert(n->branch==brc_num);
         branch_type& brc = branches_[brc_num];
 
-        if(brc.insert<true>(n).has_inserted){
+        if(brc.insert(n).has_inserted){
 
             if(n->is_accept){
                 if(!accept_){
@@ -100,12 +100,12 @@ struct State{
                         case FSM_Node::Lazy::N:break; // goto below
                         case FSM_Node::Lazy::L:{
                             size_ -= (brc.size()-1);
-                            brc.tree_base().reset();
+                            brc.tree().reset();
                             return {true,false,FSM_Node::Lazy::L};
                         }
                         case FSM_Node::Lazy::D:{
                             for(branch_type& b : branches_)
-                                b.tree_base().reset();
+                                b.tree().reset();
                             size_=0;
                             return {true,false,FSM_Node::Lazy::D};
                         }
@@ -118,12 +118,12 @@ struct State{
                             case FSM_Node::Lazy::N:break; // goto below
                             case FSM_Node::Lazy::L:{
                                 size_ -= (brc.size()-1);
-                                brc.tree_base().reset();
+                                brc.tree().reset();
                                 return {true,false,FSM_Node::Lazy::L};
                             }
                             case FSM_Node::Lazy::D:{
                                 for(branch_type& b : branches_)
-                                    b.tree_base().reset();
+                                    b.tree().reset();
                                 size_=0;
                                 return {true,false,FSM_Node::Lazy::D};
                             }
@@ -132,7 +132,7 @@ struct State{
                         assert(n->lazy!=FSM_Node::Lazy::D);
                         if(n->lazy==FSM_Node::Lazy::L){
                             size_ -= (brc.size()-1);
-                            brc.tree_base().reset();
+                            brc.tree().reset();
                             return {true,false,FSM_Node::Lazy::L};
                         }// else goto below
                     }
@@ -142,7 +142,7 @@ struct State{
             ++size_;
             return {true,n->is_head,FSM_Node::Lazy::N};
 
-        } // if(brc.insert<true>(n).has_inserted)
+        } // if(brc.insert(n).has_inserted)
         return {false,false,FSM_Node::Lazy::N};
     } // insert_return_type insert_at_branch(const size_t brc_num,const FSM_Node* const n)
 
@@ -159,7 +159,7 @@ struct State{
             if(std::strong_ordering cmp = lhs.branches_.front().size()<=>rhs.branches_.front().size();cmp!=0) return cmp;
             return std::strong_ordering::equal;
         }
-        bool operator()(const State& lhs,const State& rhs) const {return compare3(lhs,rhs)==std::strong_ordering::less;}
+        static bool operator()(const State& lhs,const State& rhs) {return compare3(lhs,rhs)<0;}
     };
 
     friend bool state_equal(const State& lhs,const State& rhs){
@@ -193,10 +193,10 @@ struct State{
     void trim(){
         for(branch_type& brc : branches_){
             switch(brc.size()){
-                case 0: brc.tree_base().reset();break;
+                case 0: brc.tree().reset();break;
                 case 1:{
-                    if(brc.tree_base().front()->is_accept)
-                        brc.tree_base().reset(),--size_;
+                    if(brc.tree().front()->is_accept)
+                        brc.tree().reset(),--size_;
                     break;
                 }
             }
@@ -249,7 +249,7 @@ struct State_Ex{
         }else{
             assert((state.post_heads_imm_.empty() || state.post_heads_imm_.back()<=i) && (post_heads.empty() || post_heads.back()<=i));
             if((state.post_heads_imm_.empty() || state.post_heads_imm_.back()<i) && (post_heads.empty() || post_heads.back()<i))
-                post_heads.vec_base().emplace_back(i);
+                post_heads.vector().emplace_back(i);
         }
     }
 
@@ -257,7 +257,7 @@ struct State_Ex{
     template<bool random = false>
     void insert_post_head_imm(const size_t i){
         if constexpr(random){
-            if(state.post_heads_imm_.insert_unique<true>(i).has_inserted){
+            if(state.post_heads_imm_.insert_unique(i).has_inserted){
                 const State::post_heads_type::const_iterator it = post_heads.find_any(i);
                 if(it!=post_heads.end())
                     post_heads.erase(it);
@@ -265,7 +265,7 @@ struct State_Ex{
         }else{
             assert((state.post_heads_imm_.empty() || state.post_heads_imm_.back()<=i) && (post_heads.empty() || post_heads.back()<=i));
             if(state.post_heads_imm_.empty() || state.post_heads_imm_.back()<i){
-                state.post_heads_imm_.vec_base().emplace_back(i);
+                state.post_heads_imm_.vector().emplace_back(i);
                 if(!post_heads.empty() && post_heads.back()==i)
                     post_heads.pop_back();
             }
@@ -405,7 +405,7 @@ struct Transition{
     State::post_heads_type post_heads;
 
     struct Target{
-        size_t operator()(const Transition& t) const {return t.target;}
+        static size_t operator()(const Transition& t) {return t.target;}
     };
 };
 
@@ -421,10 +421,9 @@ struct Transition_Table{
     void clear() {ov_.clear();}
 
     void insert(const char32_t c,yuki::Pair<State::post_heads_type&&,const size_t> p){
-        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at<true>(p.first,p.first,CInterval<char32_t>{c,c},std::move(p.zeroth));
+        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at(p.first,p.first,CInterval<char32_t>{c,c},std::move(p.zeroth));
         if(!ibp.has_inserted){
-            using yuki::const_kast;
-            const_kast(ibp.iterator)->cc.insert(c);
+            const_cast<yuki::IntegralCIs_OV<char32_t>&>(ibp.iterator->cc).insert(c);
             p.zeroth.clear();
         }
     }
@@ -432,12 +431,10 @@ struct Transition_Table{
     template<typename CC,typename PH>
     void insert(CC&& cc,yuki::Pair<PH,const size_t> p){
         assert(!cc.empty());
-        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at<true>(p.first,p.first,std::forward<CC>(cc),std::forward<PH>(p.zeroth));
+        const yuki::IB_Pair<OV_::const_iterator> ibp = ov_.emplace_unique_at(p.first,p.first,std::forward<CC>(cc),std::forward<PH>(p.zeroth));
         if(!ibp.has_inserted){
-            using yuki::const_kast;
-            const OV_::non_const_iterator it_nc = const_kast(ibp.iterator);
-            yuki::IntegralCIs_OV<char32_t> cc_new = (it_nc->cc) + cc;
-            swap(cc_new,it_nc->cc);
+            yuki::IntegralCIs_OV<char32_t> cc_new = (ibp.iterator->cc) + cc;
+            swap(cc_new,const_cast<yuki::IntegralCIs_OV<char32_t>&>(ibp.iterator->cc));
             if constexpr(std::is_rvalue_reference_v<PH>)
                 p.zeroth.clear();
         }
