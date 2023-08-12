@@ -122,7 +122,7 @@ void write_fsm_code(
         nspace_tail.append("} // namespace ").append(nspace);
     }
     if(!template_decl.empty() && templated_lexer.empty()){
-        fprintf(stderr,"Error: The lexer is templated but no templated name is given! (Note: Specify it by %%templated_lexer)\n");
+        fputs("Error: The lexer is templated but no templated name is given! (Note: Specify it by %templated_lexer)\n",stderr);
         ++errors_;
         templated_lexer = lexer;
     }
@@ -248,7 +248,7 @@ void write_fsm_code(
 
 \%\%\u{WSpace}*    {
     if(!initial_encountered){
-        fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
+        fputs("Error: No \"INITIAL\" state found!\n",stderr);
         ++errors_;
     }
     write_lex_and_h1();
@@ -432,7 +432,7 @@ void write_fsm_code(
     write_fsm_code_wrapped();
     named_regex_codes.emplace_back(std::move(current_fsm_name),std::move(current_regex_codes),std::move(current_eof),std::move(current_default),std::move(current_before));
     if(!initial_encountered){
-        fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
+        fputs("Error: No \"INITIAL\" state found!\n",stderr);
         ++errors_;
     }
     write_lex_and_h1();
@@ -446,7 +446,7 @@ void write_fsm_code(
 <SEC2>{
 \u{All}+    {
     for(const char c: matched)
-        fprintf(cmd_data.fp_out_cpp,"%c",c);
+        fputc(static_cast<unsigned char>(c),cmd_data.fp_out_cpp);
     return 0;
 }
 }
@@ -458,7 +458,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
 
     FILE* const out_h = cmd_data.fp_out_h;
 
-    fprintf(out_h,"#pragma once\n");
+    fputs("#pragma once\n",out_h);
     try{
         fprintf(out_h,"%s\n",code_htable.at("h_top").c_str());
     }catch(const std::out_of_range&){}
@@ -544,31 +544,31 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
         size_t head_counter=0;
         for(const size_t next_head : heads){
             for(;i<next_head;++i)
-                fprintf(out_cpp,"0,");
+                fputs("0,",out_cpp);
             assert(i==next_head);
             fprintf(out_cpp,"%zu,",head_counter++);
             ++i;
         }
-        fprintf(out_cpp,"};\n");
+        fputs("};\n",out_cpp);
     }else
-        fprintf(out_cpp,IND "(void)heads;\n");
+        fputs(IND "(void)heads;\n",out_cpp);
     #ifdef YUKI_LEX_META_DBG
     if(!cmd_data.debug_options.no_normal)
         yuki::lex::write_fsm_code(out_cpp,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
     if(cmd_data.debug_options.policy_char){
         fprintf(cmd_data.debug_options.policy_char,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.policy_char,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{cmd_data.debug_options.policy_char,nullptr});
-        fprintf(cmd_data.debug_options.policy_char,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.policy_char);
     }
     if(cmd_data.debug_options.simple_accumulate){
         fprintf(cmd_data.debug_options.simple_accumulate,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.simple_accumulate,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{nullptr,cmd_data.debug_options.simple_accumulate});
-        fprintf(cmd_data.debug_options.simple_accumulate,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.simple_accumulate);
     }
     if(cmd_data.debug_options.text){
         fprintf(cmd_data.debug_options.text,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.text,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
-        fprintf(cmd_data.debug_options.text,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.text);
     }
     #else
     yuki::lex::write_fsm_code(out_cpp,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
@@ -623,7 +623,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
         fprintf(out_cpp,"case State::%s:{\n",nrc.name.c_str());
 
         if(max_heads!=0)
-            fprintf(out_cpp,IND "clear_heads();\n");
+            fputs(IND "clear_heads();\n",out_cpp);
 
         if(!nrc.before_code.empty())
             fprintf(out_cpp,
@@ -688,15 +688,16 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
             );
         else
             fprintf(out_cpp,
-                IND IND IND "fprintf(stderr,\"YLEX Error: Lexer jammed at state %s!\\n\");\n"
+                IND IND IND "fputs(\"YLEX Error: Lexer jammed at state %s!\\n\",stderr);\n"
                 IND IND IND "exit(EXIT_FAILURE);\n",
                 nrc.name.c_str()
             );
 
-        fprintf(out_cpp,
+        fputs(
             IND IND "} // if(!in.getable()) else\n"
             IND IND "break;\n"
-            IND "} // case 0\n"
+            IND "} // case 0\n",
+            out_cpp
         );
 
         size_t i=1;
@@ -778,7 +779,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
             input_class.c_str()
         );
     }
-    fprintf(out_h,HIND "public:\n");
+    fputs(HIND "public:\n",out_h);
     try{
         fprintf(out_h,"%s\n",code_htable.at("class").c_str());
     }catch(const std::out_of_range&){}

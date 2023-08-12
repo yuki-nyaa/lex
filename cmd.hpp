@@ -30,10 +30,10 @@ namespace cmd_impl{
     inline void i(Cmd_Data& cmd_data,const char*const*const argv,const size_t argc){
         switch(argc){
             case 0:
-                fprintf(stderr,"Warning: Empty input filepath.\n");
+                fputs("Warning: Empty input filepath.\n",stderr);
                 break;
             default:
-                fprintf(stderr,"Warning: Multiple outputs specified. (Note: Enclose the path in quotes if it contains spaces.)\n");
+                fputs("Warning: Multiple outputs specified. (Note: Enclose the path in quotes if it contains spaces.)\n",stderr);
                 [[fallthrough]];
             case 1:
                 cmd_data.fp_in = fopen(argv[0],"r");
@@ -48,10 +48,10 @@ namespace cmd_impl{
     inline void o(Cmd_Data& cmd_data,const char*const*const argv,const size_t argc){
         switch(argc){
             case 0:
-                fprintf(stderr,"Warning: Empty output filepath.\n");
+                fputs("Warning: Empty output filepath.\n",stderr);
                 break;
             default:
-                fprintf(stderr,"Warning: Multiple outputs specified. (Note: Enclose the path in quotes if it contains spaces.)\n");
+                fputs("Warning: Multiple outputs specified. (Note: Enclose the path in quotes if it contains spaces.)\n",stderr);
                 [[fallthrough]];
             case 1:
                 cmd_data.out_cpp = argv[0];
@@ -62,10 +62,10 @@ namespace cmd_impl{
     inline void h(Cmd_Data& cmd_data,const char*const*const argv,const size_t argc){
         switch(argc){
             case 0:
-                fprintf(stderr,"Warning: Empty output header filepath.\n");
+                fputs("Warning: Empty output header filepath.\n",stderr);
                 break;
             default:
-                fprintf(stderr,"Warning: Multiple output headers specified. (Note: Enclose the path in quotes if it contains spaces.)\n");
+                fputs("Warning: Multiple output headers specified. (Note: Enclose the path in quotes if it contains spaces.)\n",stderr);
                 [[fallthrough]];
             case 1:
                 cmd_data.out_h = argv[0];
@@ -73,7 +73,7 @@ namespace cmd_impl{
         }
     }
 
-    inline void version(FILE* const out) {fprintf(out,"lex by Yuki, version 1.0\n");}
+    inline void version(FILE* const out) {fputs("lex by Yuki, version 1.0\n",out);}
     inline void version(Cmd_Data&,const char*const*,size_t) {version(stderr); exit(EXIT_SUCCESS);}
 
     #ifdef YUKI_LEX_META_DBG
@@ -107,7 +107,7 @@ inline constexpr yuki::Cmd_Option<Cmd_Data> coarr[] = {
 
 inline bool Cmd_Data::post_process(){
     if(!fp_in){
-        fprintf(stderr,"Error: No input is specified! (Note: use \"-i\" to specify input file.)\n");
+        fputs("Error: No input is specified! (Note: use \"-i\" to specify input file.)\n",stderr);
         return false;
     }
 
@@ -115,7 +115,7 @@ inline bool Cmd_Data::post_process(){
     const auto [input_no_ext,input_ext] = yuki::vsplit_filename(in);
 
     if(input_ext=="cpp" || input_ext=="h" || input_ext=="hpp"){
-        fprintf(stderr,"Error: The input file has extension \".cpp\", \".h\", or \".hpp\", which might collide with the output files!\n");
+        fputs("Error: The input file has extension \".cpp\", \".h\", or \".hpp\", which might collide with the output files!\n",stderr);
         return false;
     }
 

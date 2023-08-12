@@ -140,7 +140,7 @@ struct FSM_Edges{
         }
     } meta = {0,nullptr};
 
-    constexpr FSM_Edges() noexcept = default;
+    FSM_Edges() noexcept = default;
 
     FSM_Edges(const FSM_Edges&) noexcept = default;
 

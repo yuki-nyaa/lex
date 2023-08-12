@@ -28,11 +28,11 @@ struct State{
     size_t size_ = 0;
     post_heads_type post_heads_imm_;
   public:
-    constexpr State() noexcept = default;
+    State() noexcept = default;
 
     State(const State&) noexcept = default;
 
-    constexpr State(State&& other) noexcept :
+    State(State&& other) noexcept :
         branches_(std::move(other.branches_)),
         accept_(other.accept_),
         size_(other.size_),
@@ -56,7 +56,7 @@ struct State{
         return *this;
     }
 
-    friend constexpr void swap(State& lhs,State& rhs) noexcept {
+    friend void swap(State& lhs,State& rhs) noexcept {
         using std::swap;
         swap(lhs.branches_,rhs.branches_);
         swap(lhs.accept_,rhs.accept_);
@@ -1445,9 +1445,9 @@ void policy_edge_i(const size_t fsms_size,const unsigned height_i,const unsigned
             size_t suffix_index;
         } arr[64];
         std::remove_reference_t<decltype(*arr)>* e=arr;
-        constexpr void push(const uint_least64_t ei_p,const yuki::Vector<UEntry>::const_iterator il_p,const size_t si_p) {*e={ei_p,il_p,si_p};++e;}
-        constexpr auto pop() {return *--e;}
-        constexpr bool empty() const {return e==arr;}
+        void push(const uint_least64_t ei_p,const yuki::Vector<UEntry>::const_iterator il_p,const size_t si_p) {*e={ei_p,il_p,si_p};++e;}
+        auto pop() {return *--e;}
+        bool empty() const {return e==arr;}
     } probe_stack;
 
     /// @pre `h_probe>=height_u`.
@@ -1721,9 +1721,9 @@ void policy_edge_u(const size_t fsms_size,const unsigned height_i,const unsigned
             size_t suffix_index;
         } arr[64];
         std::remove_reference_t<decltype(*arr)>* e=arr;
-        constexpr void push(const uint_least64_t ei_p,const yuki::Vector<IEntry>::iterator il_p,const size_t si_p) {*e={ei_p,il_p,si_p};++e;}
-        constexpr auto pop() {return *--e;}
-        constexpr bool empty() const {return e==arr;}
+        void push(const uint_least64_t ei_p,const yuki::Vector<IEntry>::iterator il_p,const size_t si_p) {*e={ei_p,il_p,si_p};++e;}
+        auto pop() {return *--e;}
+        bool empty() const {return e==arr;}
     } probe_stack;
 
     /// If `*i_probe` does not have a `State_Ex` cached, then calculates and caches it.
@@ -2070,7 +2070,7 @@ void write_fsm_code(
         fprintf(out,HIND "S%zu:\n",worklist.front()->mapped);
 
         if(is_headed.front())
-            fprintf(out,IND "pos_head=in.get_pos();\n");
+            fputs(IND "pos_head=in.get_pos();\n",out);
 
         for(const size_t head : current_state.post_heads_imm())
             fprintf(out,IND "heads[HEAD_MAP[%zu]]=pos_head;\n",head);
@@ -2122,7 +2122,6 @@ void write_fsm_code(
 
         { // write meta transitions.
         // The processing of meta transitions is like `policy_char`. A character in this context is a conjunction of a lexer's internal states, encoded here as an at-most-6-bits unsigned integer. A meta character in this context now becomes a character class, containing all conjunctions where the corresponding bit is on.
-
         unsigned meta_actives = 0;
         unsigned to_true_index[6] = {};
         for(unsigned i=0;i<6;++i)
@@ -2148,16 +2147,16 @@ void write_fsm_code(
 
             switch(meta_actives){
                 case 1:{
-                    fprintf(out,IND "if(");
+                    fputs(IND "if(",out);
                     switch(to_true_index[0]+1){
-                        case MetaChar::BOL: fprintf(out,"in.at_bol()");break;
-                        case MetaChar::EOL: fprintf(out,"in.at_eol()");break;
-                        case MetaChar::BOI: fprintf(out,"in.at_boi()");break;
-                        case MetaChar::EOI: fprintf(out,"in.at_eoi()");break;
-                        case MetaChar::EoF: fprintf(out,"!in.getable()");break;
-                        case MetaChar::WB: fprintf(out,"in.at_wb()");break;
+                        case MetaChar::BOL: fputs("in.at_bol()",out);break;
+                        case MetaChar::EOL: fputs("in.at_eol()",out);break;
+                        case MetaChar::BOI: fputs("in.at_boi()",out);break;
+                        case MetaChar::EOI: fputs("in.at_eoi()",out);break;
+                        case MetaChar::EoF: fputs("!in.getable()",out);break;
+                        case MetaChar::WB: fputs("in.at_wb()",out);break;
                     }
-                    fprintf(out,")");
+                    fputc(static_cast<unsigned char>(')'),out);
 
                     next=state0;
 
@@ -2166,7 +2165,7 @@ void write_fsm_code(
                             break;
                     }
                     if(!state0.post_heads.empty()){
-                        fprintf(out,"{\n");
+                        fputs("{\n",out);
                         for(const size_t h : state0.post_heads)
                             fprintf(out,IND2 "heads[HEAD_MAP[%zu]]=pos_head;\n",h);
                         state0.post_heads.clear();
@@ -2176,14 +2175,14 @@ void write_fsm_code(
 
                     meta_edges_by_char[to_true_index[0]].positive.clear();
 
-                    fprintf(out,IND "else");
+                    fputs(IND "else",out);
 
                     for(const Meta_Edge me : meta_edges_by_char[to_true_index[0]].negative){
                         if(policy_edge_insert_meta(next,me))
                             break;
                     }
                     if(!next.post_heads.empty()){
-                        fprintf(out,"{\n");
+                        fputs("{\n",out);
                         for(const size_t h : next.post_heads)
                             fprintf(out,IND2 "heads[HEAD_MAP[%zu]]=pos_head;\n",h);
                         next.post_heads.clear();
@@ -2195,18 +2194,18 @@ void write_fsm_code(
                     break;
                 } // case 1
                 default:{
-                    fprintf(out,IND "switch(yuki::lex::make_meta_flags({");
+                    fputs(IND "switch(yuki::lex::make_meta_flags({",out);
                     for(unsigned i=meta_actives;i>0;){
                         switch(to_true_index[--i]+1){
-                            case MetaChar::BOL: fprintf(out,"in.at_bol(),");break;
-                            case MetaChar::EOL: fprintf(out,"in.at_eol(),");break;
-                            case MetaChar::BOI: fprintf(out,"in.at_boi(),");break;
-                            case MetaChar::EOI: fprintf(out,"in.at_eoi(),");break;
-                            case MetaChar::EoF: fprintf(out,"!in.getable(),");break;
-                            case MetaChar::WB: fprintf(out,"in.at_wb(),");break;
+                            case MetaChar::BOL: fputs("in.at_bol(),",out);break;
+                            case MetaChar::EOL: fputs("in.at_eol(),",out);break;
+                            case MetaChar::BOI: fputs("in.at_boi(),",out);break;
+                            case MetaChar::EOI: fputs("in.at_eoi(),",out);break;
+                            case MetaChar::EoF: fputs("!in.getable(),",out);break;
+                            case MetaChar::WB: fputs("in.at_wb(),",out);break;
                         }
                     }
-                    fprintf(out,"})){\n");
+                    fputs("})){\n",out);
                     const unsigned flags_end = 1U<<meta_actives;
                     for(unsigned flags=0;flags<flags_end;++flags){
                         next = state0;
@@ -2226,7 +2225,7 @@ void write_fsm_code(
                         }else
                             fprintf(out,IND2 "case %u: goto S%zu;\n",flags,insert_to_ss(std::move(next)).first);
                     }
-                    fprintf(out,IND "}\n");
+                    fputs(IND "}\n",out);
                     for(unsigned i=0;i<6;++i)
                         meta_edges_by_char[i].clear();
                     state0.post_heads.clear();
@@ -2328,12 +2327,12 @@ void write_fsm_code(
         }
 
         if(!transition_table.empty()){
-            fprintf(out,IND "c=in.get();\n");
+            fputs(IND "c=in.get();\n",out);
             transition_table.write(out);
             transition_table.clear();
         }
 
-        fprintf(out,IND "in.set_pos(pos_take); return cap;\n");
+        fputs(IND "in.set_pos(pos_take); return cap;\n",out);
 
         worklist.pop_front();
         is_headed.pop_front();

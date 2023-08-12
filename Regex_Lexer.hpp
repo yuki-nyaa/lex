@@ -164,10 +164,10 @@ yuki::lex::Regex_Parser_TS::Token_t lex(){
                         if(const yuki::unicode::Name_CC* const ncc=unicode_cc_table.find(std::string_view(begin,end)); ncc)
                             return Token_t(yuki::pg::in_place_kind<Token_Kind::basic_char_class>,{},yuki::from_ordered_tag,ncc->cc,ncc->cc_size);
                         else{
-                            fprintf(stderr,"Error: Unknown unicode character caterory name \"");
+                            fputs("Error: Unknown unicode character caterory name \"",stderr);
                             for(const char* i=begin;i!=end;++i)
                                 fprintf(stderr,"%c",*i);
-                            fprintf(stderr,"\"!\n");
+                            fputs("\"!\n",stderr);
                             ++errors;
                             return Token_t(yuki::pg::in_place_kind<Token_Kind::basic_char_class>,{},yuki::CInterval<char32_t>{0,yuki::UNICODE_MAX_32});
                         }
@@ -205,16 +205,16 @@ yuki::lex::Regex_Parser_TS::Token_t lex(){
                     if(const yuki::unicode::Name_CC* const ncc=posix_cc_table.find(std::string_view(begin,end)); ncc)
                         return Token_t(yuki::pg::in_place_kind<Token_Kind::basic_char_class>,{},yuki::from_ordered_tag,ncc->cc,ncc->cc_size);
                     else{
-                        fprintf(stderr,"Error: Unknown POSIX character caterory name \"");
+                        fputs("Error: Unknown POSIX character caterory name \"",stderr);
                         for(const char* i=begin;i!=end;++i)
                             fprintf(stderr,"%c",*i);
-                        fprintf(stderr,"\"!\n");
+                        fputs("\"!\n",stderr);
                         ++errors;
                         return Token_t(yuki::pg::in_place_kind<Token_Kind::basic_char_class>,{},yuki::from_ordered_tag,cc_ascii,sizeof(cc_ascii)/sizeof(yuki::CInterval<char32_t>));
                     }
                 }
                 case yuki::EOF_U8.raw():{
-                    fprintf(stderr,"Error: Incomplete escape character at the end!\n");
+                    fputs("Error: Incomplete escape character at the end!\n",stderr);
                     ++errors;
                     if(!macro_stack.empty())
                         in.set_source(macro_stack.pop_back_v());

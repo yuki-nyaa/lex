@@ -2295,7 +2295,7 @@ case State::INITIAL:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=INITIAL DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state INITIAL!\n");
+            fputs("YLEX Error: Lexer jammed at state INITIAL!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2421,7 +2421,7 @@ if(debug_prefix.empty())
         nspace_tail.append("} // namespace ").append(nspace);
     }
     if(!template_decl.empty() && templated_lexer.empty()){
-        fprintf(stderr,"Error: The lexer is templated but no templated name is given! (Note: Specify it by %%templated_lexer)\n");
+        fputs("Error: The lexer is templated but no templated name is given! (Note: Specify it by %templated_lexer)\n",stderr);
         ++errors_;
         templated_lexer = lexer;
     }
@@ -2461,7 +2461,7 @@ case State::O_NSPACE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_NSPACE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_NSPACE!\n");
+            fputs("YLEX Error: Lexer jammed at state O_NSPACE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2487,7 +2487,7 @@ case State::O_LEXER:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_LEXER DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_LEXER!\n");
+            fputs("YLEX Error: Lexer jammed at state O_LEXER!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2513,7 +2513,7 @@ case State::O_ICLASS:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_ICLASS DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_ICLASS!\n");
+            fputs("YLEX Error: Lexer jammed at state O_ICLASS!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2539,7 +2539,7 @@ case State::O_IHEADER:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_IHEADER DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_IHEADER!\n");
+            fputs("YLEX Error: Lexer jammed at state O_IHEADER!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2565,7 +2565,7 @@ case State::O_DPREFIX:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_DPREFIX DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_DPREFIX!\n");
+            fputs("YLEX Error: Lexer jammed at state O_DPREFIX!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2591,7 +2591,7 @@ case State::O_FCNSPACE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_FCNSPACE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_FCNSPACE!\n");
+            fputs("YLEX Error: Lexer jammed at state O_FCNSPACE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2617,7 +2617,7 @@ case State::O_TTYPE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_TTYPE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_TTYPE!\n");
+            fputs("YLEX Error: Lexer jammed at state O_TTYPE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2643,7 +2643,7 @@ case State::O_TPLEXER:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=O_TPLEXER DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state O_TPLEXER!\n");
+            fputs("YLEX Error: Lexer jammed at state O_TPLEXER!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2696,7 +2696,7 @@ case State::MACRO_DEF:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=MACRO_DEF DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state MACRO_DEF!\n");
+            fputs("YLEX Error: Lexer jammed at state MACRO_DEF!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2729,7 +2729,7 @@ case State::CODE0:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=CODE0 DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state CODE0!\n");
+            fputs("YLEX Error: Lexer jammed at state CODE0!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2784,7 +2784,7 @@ case State::CODE1:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=CODE1 DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state CODE1!\n");
+            fputs("YLEX Error: Lexer jammed at state CODE1!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2857,7 +2857,7 @@ case State::C_LIT:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=C_LIT DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state C_LIT!\n");
+            fputs("YLEX Error: Lexer jammed at state C_LIT!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2901,7 +2901,7 @@ case State::S_LIT:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=S_LIT DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state S_LIT!\n");
+            fputs("YLEX Error: Lexer jammed at state S_LIT!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2945,7 +2945,7 @@ case State::SEC1:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=SEC1 DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state SEC1!\n");
+            fputs("YLEX Error: Lexer jammed at state SEC1!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -2968,7 +2968,7 @@ current_fsm_name=matched.substr(1,matched.size()-3);
         YUKI_LEX_Meta_Lexer_DBGO("State=SEC1 cap=2 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
 if(!initial_encountered){
-        fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
+        fputs("Error: No \"INITIAL\" state found!\n",stderr);
         ++errors_;
     }
     write_lex_and_h1();
@@ -3034,7 +3034,7 @@ case State::REGEX:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=REGEX DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state REGEX!\n");
+            fputs("YLEX Error: Lexer jammed at state REGEX!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3110,7 +3110,7 @@ case State::REGEX_CODE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=REGEX_CODE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state REGEX_CODE!\n");
+            fputs("YLEX Error: Lexer jammed at state REGEX_CODE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3180,7 +3180,7 @@ case State::DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX!\n");
+            fputs("YLEX Error: Lexer jammed at state DISCARD_EVERYTHING_UNTIL_NEWLINE_TO_POST_REGEX!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3206,7 +3206,7 @@ case State::REGEX_CODE_EOF:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=REGEX_CODE_EOF DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state REGEX_CODE_EOF!\n");
+            fputs("YLEX Error: Lexer jammed at state REGEX_CODE_EOF!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3274,7 +3274,7 @@ case State::C_LIT_EOF:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=C_LIT_EOF DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state C_LIT_EOF!\n");
+            fputs("YLEX Error: Lexer jammed at state C_LIT_EOF!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3318,7 +3318,7 @@ case State::S_LIT_EOF:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=S_LIT_EOF DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state S_LIT_EOF!\n");
+            fputs("YLEX Error: Lexer jammed at state S_LIT_EOF!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3362,7 +3362,7 @@ case State::REGEX_CODE_DEFAULT:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=REGEX_CODE_DEFAULT DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state REGEX_CODE_DEFAULT!\n");
+            fputs("YLEX Error: Lexer jammed at state REGEX_CODE_DEFAULT!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3430,7 +3430,7 @@ case State::C_LIT_DEFAULT:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=C_LIT_DEFAULT DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state C_LIT_DEFAULT!\n");
+            fputs("YLEX Error: Lexer jammed at state C_LIT_DEFAULT!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3474,7 +3474,7 @@ case State::S_LIT_DEFAULT:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=S_LIT_DEFAULT DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state S_LIT_DEFAULT!\n");
+            fputs("YLEX Error: Lexer jammed at state S_LIT_DEFAULT!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3518,7 +3518,7 @@ case State::REGEX_CODE_BEFORE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=REGEX_CODE_BEFORE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state REGEX_CODE_BEFORE!\n");
+            fputs("YLEX Error: Lexer jammed at state REGEX_CODE_BEFORE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3586,7 +3586,7 @@ case State::C_LIT_BEFORE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=C_LIT_BEFORE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state C_LIT_BEFORE!\n");
+            fputs("YLEX Error: Lexer jammed at state C_LIT_BEFORE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3630,7 +3630,7 @@ case State::S_LIT_BEFORE:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=S_LIT_BEFORE DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state S_LIT_BEFORE!\n");
+            fputs("YLEX Error: Lexer jammed at state S_LIT_BEFORE!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3704,7 +3704,7 @@ fprintf(stderr,"Error: Missing closing brace for fsm \"%s\"!\n",current_fsm_name
     write_fsm_code_wrapped();
     named_regex_codes.emplace_back(std::move(current_fsm_name),std::move(current_regex_codes),std::move(current_eof),std::move(current_default),std::move(current_before));
     if(!initial_encountered){
-        fprintf(stderr,"Error: No \"INITIAL\" state found!\n");
+        fputs("Error: No \"INITIAL\" state found!\n",stderr);
         ++errors_;
     }
     write_lex_and_h1();
@@ -3725,7 +3725,7 @@ case State::SEC2:{
             return int();
         }else{ // if(!in.getable())
             YUKI_LEX_Meta_Lexer_DBGO("State=SEC2 DEFAULT\n");
-            fprintf(stderr,"YLEX Error: Lexer jammed at state SEC2!\n");
+            fputs("YLEX Error: Lexer jammed at state SEC2!\n",stderr);
             exit(EXIT_FAILURE);
         } // if(!in.getable()) else
         break;
@@ -3735,7 +3735,7 @@ case State::SEC2:{
         YUKI_LEX_Meta_Lexer_DBGO("State=SEC2 cap=1 matched={} len={}\n",matched.substr(0,YUKI_LEX_Meta_Lexer_DBG_REGEX_MAX_PRINT),matched.size());
         {
 for(const char c: matched)
-        fprintf(cmd_data.fp_out_cpp,"%c",c);
+        fputc(static_cast<unsigned char>(c),cmd_data.fp_out_cpp);
     return 0;
         }
         in.clear_matched();
@@ -3758,7 +3758,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
 
     FILE* const out_h = cmd_data.fp_out_h;
 
-    fprintf(out_h,"#pragma once\n");
+    fputs("#pragma once\n",out_h);
     try{
         fprintf(out_h,"%s\n",code_htable.at("h_top").c_str());
     }catch(const std::out_of_range&){}
@@ -3844,31 +3844,31 @@ void yuki::lex::Meta_Lexer::write_fsm_code_wrapped(){
         size_t head_counter=0;
         for(const size_t next_head : heads){
             for(;i<next_head;++i)
-                fprintf(out_cpp,"0,");
+                fputs("0,",out_cpp);
             assert(i==next_head);
             fprintf(out_cpp,"%zu,",head_counter++);
             ++i;
         }
-        fprintf(out_cpp,"};\n");
+        fputs("};\n",out_cpp);
     }else
-        fprintf(out_cpp,IND "(void)heads;\n");
+        fputs(IND "(void)heads;\n",out_cpp);
     #ifdef YUKI_LEX_META_DBG
     if(!cmd_data.debug_options.no_normal)
         yuki::lex::write_fsm_code(out_cpp,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
     if(cmd_data.debug_options.policy_char){
         fprintf(cmd_data.debug_options.policy_char,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.policy_char,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{cmd_data.debug_options.policy_char,nullptr});
-        fprintf(cmd_data.debug_options.policy_char,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.policy_char);
     }
     if(cmd_data.debug_options.simple_accumulate){
         fprintf(cmd_data.debug_options.simple_accumulate,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.simple_accumulate,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str(),{nullptr,cmd_data.debug_options.simple_accumulate});
-        fprintf(cmd_data.debug_options.simple_accumulate,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.simple_accumulate);
     }
     if(cmd_data.debug_options.text){
         fprintf(cmd_data.debug_options.text,"%s\n",current_fsm_name.c_str());
         yuki::lex::write_fsm_code(cmd_data.debug_options.text,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
-        fprintf(cmd_data.debug_options.text,"\n\n");
+        fputs("\n\n",cmd_data.debug_options.text);
     }
     #else
     yuki::lex::write_fsm_code(out_cpp,rp.fsms(),rp.fsms_size(),rp.max_branch_size(),rp.max_branch_number(),errors_,current_fsm_name.c_str());
@@ -3923,7 +3923,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
         fprintf(out_cpp,"case State::%s:{\n",nrc.name.c_str());
 
         if(max_heads!=0)
-            fprintf(out_cpp,IND "clear_heads();\n");
+            fputs(IND "clear_heads();\n",out_cpp);
 
         if(!nrc.before_code.empty())
             fprintf(out_cpp,
@@ -3988,15 +3988,16 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
             );
         else
             fprintf(out_cpp,
-                IND IND IND "fprintf(stderr,\"YLEX Error: Lexer jammed at state %s!\\n\");\n"
+                IND IND IND "fputs(\"YLEX Error: Lexer jammed at state %s!\\n\",stderr);\n"
                 IND IND IND "exit(EXIT_FAILURE);\n",
                 nrc.name.c_str()
             );
 
-        fprintf(out_cpp,
+        fputs(
             IND IND "} // if(!in.getable()) else\n"
             IND IND "break;\n"
-            IND "} // case 0\n"
+            IND "} // case 0\n",
+            out_cpp
         );
 
         size_t i=1;
@@ -4078,7 +4079,7 @@ void yuki::lex::Meta_Lexer::write_lex_and_h1(){
             input_class.c_str()
         );
     }
-    fprintf(out_h,HIND "public:\n");
+    fputs(HIND "public:\n",out_h);
     try{
         fprintf(out_h,"%s\n",code_htable.at("class").c_str());
     }catch(const std::out_of_range&){}
