@@ -181,7 +181,7 @@ yuki::lex::Regex_Parser_TS::Token_t lex(){
                     char* end;
                     const unsigned long ul = strtoul(in.data,&end,16);
                     in.set_pos(end);
-                    if(ul>yuki::UNICODE_MAX_32){
+                    if(errno==ERANGE || ul>yuki::UNICODE_MAX_32){
                         fprintf(stderr,"Error: Unicode character %lx exceeds the max!\n",ul);
                         ++errors;
                         return Token_t(yuki::pg::in_place_kind<Token_Kind::character>,{},yuki::UNICODE_MAX_32);
@@ -236,12 +236,21 @@ yuki::lex::Regex_Parser_TS::Token_t lex(){
                 case '7'_uc:
                 case '8'_uc:
                 case '9'_uc:{
+                    // TODO
                     const char* const begin0 = in.data;
                     char* end;
-                    const unsigned long long lb = strtoull(in.data,&end,10);
+                    const unsigned long long lb = strtoull(in.data,&end,0);
+                    if(errno==ERANGE){
+                        fputs("Error: The lower bound of an amount range is too big!\n",stderr);
+                        ++errors;
+                    }
                     in.set_pos(end+1);
                     const char* const begin1 = in.data;
-                    const unsigned long long ub = strtoull(in.data,&end,10);
+                    const unsigned long long ub = strtoull(in.data,&end,0);
+                    if(errno==ERANGE){
+                        fputs("Error: The upper bound of an amount range is too big!\n",stderr);
+                        ++errors;
+                    }
                     in.set_pos(end+1);
                     if(end!=begin1)
                         return Token_t(yuki::pg::in_place_kind<Token_Kind::amount>,{},lb,ub);

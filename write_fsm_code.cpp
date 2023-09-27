@@ -2348,5 +2348,5 @@ void write_fsm_code(
     state_set.clear();
     worklist.clear(); // Should already be clear. Just reset the pointer positions.
     is_headed.clear(); // Should already be clear. Just reset the pointer positions.
-} // write
+} // write_fsm_code
 } // namespace yuki::lex

@@ -482,7 +482,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
         "#define %sO(...) yuki::dbgout_base(fp_dbg_,\"%s\",__VA_ARGS__)\n"
         "#define CONSTEXPR_%s // Debug output would render constexpr-functions non-constexpr.\n"
         "#ifndef %s_REGEX_MAX_PRINT\n"
-        "#define %s_REGEX_MAX_PRINT %d\n"
+        "#define %s_REGEX_MAX_PRINT %zu\n"
         "#endif\n"
         "#else\n"
         "#define %sO(...)\n"
@@ -499,7 +499,7 @@ void yuki::lex::Meta_Lexer::write_h0() const {
         debug_prefix.c_str(),debug_prefix.c_str(),
         debug_prefix.c_str(),
         debug_prefix.c_str(),
-        debug_prefix.c_str(), YUKI_LEX_TARGET_DBG_REGEX_MAX_PRINT,
+        debug_prefix.c_str(), size_t(YUKI_LEX_TARGET_DBG_REGEX_MAX_PRINT),
         debug_prefix.c_str(),
         debug_prefix.c_str()
     );
